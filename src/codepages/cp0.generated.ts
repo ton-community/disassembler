@@ -11,55 +11,45 @@ CP0Auto.insertHex('0', 4, (slice) => {
     }
     return `s0 s${n} XCHG`
 })
-// CP0Auto.insertHex('10', 8, 'SWAP');
+CP0Auto.insertHex('1', 4, (slice) => {
+    let n = slice.readUintNumber(4)
+    return `s1 s${n} XCHG`
+})
 CP0Auto.insertHex('2', 4, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('10', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('11', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
-// CP0Auto.insertHex('12', 4, (slice) => {
-//     let args = slice.readUintNumber(4);
-//     return '(FIXED)';
-// });
-// CP0Auto.insertHex('20', 8, 'DUP');
-// CP0Auto.insertHex('21', 8, 'OVER');
-// CP0Auto.insertHex('22', 4, (slice) => {
-//     let args = slice.readUintNumber(4);
-//     return '(FIXED)';
-// });
-CP0Auto.insertHex('30', 8, 'DROP');
-CP0Auto.insertHex('31', 8, 'NIP');
-// CP0Auto.insertHex('320000', 4, (slice) => {
-//     let args = slice.readUintNumber(4);
-//     return '(FIXED)';
-// });
+    let n = slice.readUintNumber(4)
+    return `s${n} PUSH`
+})
+CP0Auto.insertHex('3', 4, (slice) => {
+    let value = slice.readUintNumber(4)
+    return `s${value} POP`
+})
 CP0Auto.insertHex('4', 4, (slice) => {
-    let args = slice.readUintNumber(12);
-    return '(FIXED)';
-});
+    let i = slice.readUintNumber(4)
+    let j = slice.readUintNumber(4)
+    let k = slice.readUintNumber(4)
+    return `s${i} s${j} s${k} XCHG3`
+})
 CP0Auto.insertHex('50', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
+    let i = slice.readUintNumber(4)
+    let j = slice.readUintNumber(4)
+    return `s${i} s${j} XCHG2`
+})
 CP0Auto.insertHex('51', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
+    let i = slice.readUintNumber(4)
+    let j = slice.readUintNumber(4)
+    return `s${i} s${j} XCPU`
+})
 CP0Auto.insertHex('52', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
+    let i = slice.readUintNumber(4)
+    let j = slice.readUintNumber(4)
+    return `s${i} s${j-1} PUXC`
+})
 CP0Auto.insertHex('53', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
+    let args = slice.readUintNumber(8)
+    let first = args >> 4 & 0xf
+    let second = args & 0xf
+    return `s${first} s${second} PUSH2`
+})
 CP0Auto.insertHex('540', 12, (slice) => {
     let args = slice.readUintNumber(12);
     return '(FIXED)';
