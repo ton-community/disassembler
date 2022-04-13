@@ -1,5 +1,5 @@
 import { Cell, Slice } from 'ton';
-import { decompile, decompileMethodsMap } from '../decompiler';
+import { decompile, decompileMethodsMap } from '../disassembler';
 import { Codepage } from '../structs/codepage';
 
 function fetchSubslice(slice: Slice, bits: number, refs?: number) {

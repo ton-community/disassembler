@@ -1,6 +1,6 @@
 import { Address, Cell, TonClient } from 'ton'
 import { CP0Manual } from './codepages/cp0.manual'
-import { fromCode, setCodepage } from './decompiler'
+import { fromCode, setCodepage } from './disassembler'
 
 it('should work', async () => {
     // setCodepage(CP0Manual)
