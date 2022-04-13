@@ -1,5 +1,5 @@
 import { Slice } from 'ton';
-import { decompile } from '../decompiler';
+import { decompile } from '../disassembler';
 import { Codepage } from '../structs/codepage';
 
 const CP0Manual = new Codepage()

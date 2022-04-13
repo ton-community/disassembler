@@ -1,11 +1,12 @@
 {
-  "name": "disassembler",
+  "name": "ton-disassembler",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
     "build": "tsc"
   },
+  "files": ["dist"],
   "dependencies": {
     "bn.js": "^5.2.0",
     "ton": "^6.5.1",
