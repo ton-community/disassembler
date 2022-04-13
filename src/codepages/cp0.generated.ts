@@ -171,8 +171,8 @@ CP0Auto.insertHex('6c', 8, (slice) => {
     let j = slice.readUintNumber(4);
     return `${i} ${j} BLKDROP2`;
 });
-CP0Auto.insertHex('6d0000', 8, 'PUSHNULL');
-CP0Auto.insertHex('6e0000', 8, 'ISNULL');
+CP0Auto.insertHex('6d', 8, 'PUSHNULL');
+CP0Auto.insertHex('6e', 8, 'ISNULL');
 CP0Auto.insertHex('6f0', 12, (slice) => {
     let n = slice.readUintNumber(4);
     if (n === 0) {
@@ -706,7 +706,7 @@ CP0Auto.insertHex('d70', 12, (slice) => {
 });
 CP0Auto.insertHex('d71000', 13, (slice) => {
     let args = slice.readUintNumber(3); // TODO
-    return '(FIXED)';
+    return '(FIXED 709)';
 });
 CP0Auto.insertHex('d71800', 14, (slice) => {
     let quiet = slice.readBit();
@@ -876,7 +876,7 @@ CP0Auto.insertHex('e31b00', 16, 'AGAINENDBRK');
 // 14883840 (DUMMY)
 CP0Auto.insertHex('e38000', 10, (slice) => {
     let args = slice.readUintNumber(6);
-    return '(FIXED)';
+    return '(FIXED 879)';
 });
 CP0Auto.insertHex('e3c000', 10, (slice) => {
     let args = slice.readUintNumber(6);
@@ -892,11 +892,11 @@ CP0Auto.insertHex('ea0000', 8, 'AGAIN');
 CP0Auto.insertHex('eb0000', 8, 'AGAINEND');
 CP0Auto.insertHex('ec0000', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return '(FIXED 895)';
 });
 CP0Auto.insertHex('ed0000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 899)';
 });
 CP0Auto.insertHex('ed1000', 16, 'RETURNVARARGS');
 CP0Auto.insertHex('ed1100', 16, 'SETCONTVARARGS');
@@ -909,116 +909,107 @@ CP0Auto.insertHex('ed4', 12, (slice) => {
     let n = slice.readUintNumber(4);
     return `c${n} PUSH`;
 });
-CP0Auto.insertHex('ed5000', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('ed5400', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-// 15554048 (DUMMY)
-CP0Auto.insertHex('ed5700', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+CP0Auto.insertHex('ed5', 12, (slice) => {
+    let x = slice.readUintNumber(4);
+    return `c${x} POP`;
 });
 // 15554560 (DUMMY)
 CP0Auto.insertHex('ed6000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 919)';
 });
 CP0Auto.insertHex('ed6400', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 923)';
 });
 // 15558144 (DUMMY)
 CP0Auto.insertHex('ed6700', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 928)';
 });
 // 15558656 (DUMMY)
 CP0Auto.insertHex('ed7000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 933)';
 });
 CP0Auto.insertHex('ed7400', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 937)';
 });
 // 15562240 (DUMMY)
 CP0Auto.insertHex('ed7700', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 942)';
 });
 // 15562752 (DUMMY)
 CP0Auto.insertHex('ed8000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 947)';
 });
 CP0Auto.insertHex('ed8400', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 951)';
 });
 // 15566336 (DUMMY)
 CP0Auto.insertHex('ed8700', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 956)';
 });
 // 15566848 (DUMMY)
 CP0Auto.insertHex('ed9000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 961)';
 });
 CP0Auto.insertHex('ed9400', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 965)';
 });
 // 15570432 (DUMMY)
 CP0Auto.insertHex('ed9700', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 970)';
 });
 // 15570944 (DUMMY)
 CP0Auto.insertHex('eda000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 975)';
 });
 CP0Auto.insertHex('eda400', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 979)';
 });
 // 15574528 (DUMMY)
 CP0Auto.insertHex('eda700', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 984)';
 });
 // 15575040 (DUMMY)
 CP0Auto.insertHex('edb000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 989)';
 });
 CP0Auto.insertHex('edb400', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 993)';
 });
 // 15578624 (DUMMY)
 CP0Auto.insertHex('edb700', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 998)';
 });
 // 15579136 (DUMMY)
 CP0Auto.insertHex('edc000', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 1003)';
 });
 CP0Auto.insertHex('edc400', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 1007)';
 });
 // 15582720 (DUMMY)
 CP0Auto.insertHex('edc700', 12, (slice) => {
     let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    return '(FIXED 1012)';
 });
 // 15583232 (DUMMY)
 CP0Auto.insertHex('ede000', 16, 'PUSHCTRX');
@@ -1040,41 +1031,41 @@ CP0Auto.insertHex('edfb00', 16, 'SAMEALTSAVE');
 // 15596544 (DUMMY)
 CP0Auto.insertHex('ee0000', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return '(FIXED 1034)';
 });
 // 15663104 (DUMMY)
 CP0Auto.insertHex('f00000', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return '(FIXED 1039)';
 });
 CP0Auto.insertHex('f10000', 10, (slice) => {
     let args = slice.readUintNumber(14);
-    return '(FIXED)';
+    return '(FIXED 1043)';
 });
 CP0Auto.insertHex('f14000', 10, (slice) => {
     let args = slice.readUintNumber(14);
-    return '(FIXED)';
+    return '(FIXED 1047)';
 });
 CP0Auto.insertHex('f18000', 10, (slice) => {
     let args = slice.readUintNumber(14);
-    return '(FIXED)';
+    return '(FIXED 1051)';
 });
 // 15843328 (DUMMY)
 CP0Auto.insertHex('f20000', 10, (slice) => {
     let args = slice.readUintNumber(6);
-    return '(FIXED)';
+    return '(FIXED 1056)';
 });
-CP0Auto.insertHex('f24000', 10, (slice) => {
-    let args = slice.readUintNumber(6);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('f28000', 10, (slice) => {
-    let args = slice.readUintNumber(6);
-    return '(FIXED)';
-});
+CP0Auto.insertHex('F24', 10, (slice) => {
+    let eCode = slice.readUint(6)
+    return `${eCode} THROWIF`
+})
+CP0Auto.insertHex('F28', 10, (slice) => {
+    let eCode = slice.readUint(6)
+    return `${eCode} THROWIFNOT`
+})
 CP0Auto.insertHex('f2c000', 13, (slice) => {
     let args = slice.readUintNumber(11);
-    return '(FIXED)';
+    return '(FIXED 1068)';
 });
 CP0Auto.insertHex('f2c800', 13, (slice) => {
     let x = slice.readUintNumber(11);
@@ -1082,29 +1073,29 @@ CP0Auto.insertHex('f2c800', 13, (slice) => {
 });
 CP0Auto.insertHex('f2d000', 13, (slice) => {
     let args = slice.readUintNumber(11);
-    return '(FIXED)';
+    return '(FIXED 1076)';
 });
 CP0Auto.insertHex('f2d800', 13, (slice) => {
     let args = slice.readUintNumber(11);
-    return '(FIXED)';
+    return '(FIXED 1080)';
 });
 CP0Auto.insertHex('f2e000', 13, (slice) => {
     let args = slice.readUintNumber(11);
-    return '(FIXED)';
+    return '(FIXED 1084)';
 });
 CP0Auto.insertHex('f2e800', 13, (slice) => {
     let args = slice.readUintNumber(11);
-    return '(FIXED)';
+    return '(FIXED 1088)';
 });
 CP0Auto.insertHex('f2f000', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1092)';
 });
 // 15922688 (DUMMY)
 CP0Auto.insertHex('f2ff00', 16, 'TRY');
 CP0Auto.insertHex('f30000', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return '(FIXED 1098)';
 });
 CP0Auto.insertHex('f40000', 16, 'STDICT');
 CP0Auto.insertHex('f40100', 16, 'SKIPDICT');
@@ -1117,115 +1108,125 @@ CP0Auto.insertHex('f40700', 16, 'PLDDICTQ');
 // 15992832 (DUMMY)
 CP0Auto.insertHex('f40a00', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1111)';
 });
 // 15994880 (DUMMY)
 CP0Auto.insertHex('f41200', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1116)';
 });
 // 15996928 (DUMMY)
 CP0Auto.insertHex('f41a00', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1121)';
 });
 // 15998976 (DUMMY)
 CP0Auto.insertHex('f42200', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1126)';
 });
 // 16001024 (DUMMY)
 CP0Auto.insertHex('f42a00', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1131)';
 });
 // 16003072 (DUMMY)
 CP0Auto.insertHex('f43200', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1136)';
 });
 // 16005120 (DUMMY)
 CP0Auto.insertHex('f43a00', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1141)';
 });
 // 16007168 (DUMMY)
 CP0Auto.insertHex('f44100', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1146)';
 });
 // 16008192 (DUMMY)
 CP0Auto.insertHex('f44500', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1151)';
 });
 // 16009216 (DUMMY)
 CP0Auto.insertHex('f44900', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1156)';
 });
 // 16010240 (DUMMY)
 CP0Auto.insertHex('f44d00', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1161)';
 });
 // 16011264 (DUMMY)
 CP0Auto.insertHex('f45100', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1166)';
 });
 // 16012288 (DUMMY)
 CP0Auto.insertHex('f45500', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1171)';
 });
 // 16013312 (DUMMY)
 CP0Auto.insertHex('f45900', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1176)';
 });
 // 16014336 (DUMMY)
 CP0Auto.insertHex('f46200', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1181)';
 });
 // 16017408 (DUMMY)
 CP0Auto.insertHex('f46900', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1186)';
 });
 // 16018432 (DUMMY)
 CP0Auto.insertHex('f46d00', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    return '(FIXED 1191)';
 });
-CP0Auto.insertHex('f47000', 16, 'PFXDICTSET');
-CP0Auto.insertHex('f47100', 16, 'PFXDICTREPLACE');
-CP0Auto.insertHex('f47200', 16, 'PFXDICTADD');
-CP0Auto.insertHex('f47300', 16, 'PFXDICTDEL');
-// CP0Auto.insertHex('f47400', 12, (slice) => {
-//     let args = slice.readUintNumber(4);
-//     return '(FIXED)';
-// });
+CP0Auto.insertHex('f47', 12, (slice) => {
+    let args = slice.readUintNumber(4);
+    if (args === 0) {
+        return 'PFXDICTSET';
+    } else if (args === 1) {
+        return 'PFXDICTREPLACE';
+    } else if (args === 2) {
+        return 'PFXDICTADD';
+    } else if (args === 3) {
+        return 'PFXDICTDEL';
+    } else {
+    }
+    let res = "DICT";
+    if (args & 8) {
+        res += ((args & 4) ? 'U' : 'I');
+    }
+    return `DICT${(args & 4) ? 'U' : 'I'}GET${(args & 2) ? 'PREV' : 'NEXT'}${(args & 1) ? 'EQ' : ''}`; 
+});
 // 16023552 (DUMMY)
 CP0Auto.insertHex('f48200', 11, (slice) => {
     let args = slice.readUintNumber(5);
-    return '(FIXED)';
+    return '(FIXED 1214)';
 });
 // 16025600 (DUMMY)
 CP0Auto.insertHex('f48a00', 11, (slice) => {
     let args = slice.readUintNumber(5);
-    return '(FIXED)';
+    return '(FIXED 1219)';
 });
 // 16027648 (DUMMY)
 CP0Auto.insertHex('f49200', 11, (slice) => {
     let args = slice.readUintNumber(5);
-    return '(FIXED)';
+    return '(FIXED 1224)';
 });
 // 16029696 (DUMMY)
 CP0Auto.insertHex('f49a00', 11, (slice) => {
     let args = slice.readUintNumber(5);
-    return '(FIXED)';
+    return '(FIXED 1229)';
 });
 CP0Auto.insertHex('f4a000', 13, (slice, indent) => {
     let push = slice.readBit();
@@ -1255,12 +1256,12 @@ CP0Auto.insertHex('f4ab00', 16, 'PFXDICTGETEXEC');
 // 16035840 (DUMMY)
 CP0Auto.insertHex('f4b100', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1259)';
 });
 // 16036864 (DUMMY)
 CP0Auto.insertHex('f4b500', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    return '(FIXED 1264)';
 });
 // 16037888 (DUMMY)
 CP0Auto.insertHex('f4bc00', 14, (slice) => {
@@ -1281,7 +1282,7 @@ CP0Auto.insertHex('f81500', 16, 'ADDRAND');
 // 16258560 (DUMMY)
 // CP0Auto.insertHex('f82000', 12, (slice) => {
 //     let args = slice.readUintNumber(4);
-//     return '(FIXED)';
+//     return '(FIXED 1285)';
 // });
 CP0Auto.insertHex('f82300', 16, 'NOW');
 CP0Auto.insertHex('f82400', 16, 'BLOCKLT');
@@ -1292,7 +1293,7 @@ CP0Auto.insertHex('f82800', 16, 'MYADDR');
 CP0Auto.insertHex('f82900', 16, 'CONFIGROOT');
 // CP0Auto.insertHex('f82a00', 12, (slice) => {
 //     let args = slice.readUintNumber(4);
-//     return '(FIXED)';
+//     return '(FIXED 1296)';
 // });
 CP0Auto.insertHex('f83000', 16, 'CONFIGDICT');
 // 16265472 (DUMMY)
@@ -1302,12 +1303,12 @@ CP0Auto.insertHex('f83300', 16, 'CONFIGOPTPARAM');
 CP0Auto.insertHex('f84000', 16, 'GETGLOBVAR');
 // CP0Auto.insertHex('f84100', 11, (slice) => {
 //     let args = slice.readUintNumber(5);
-//     return '(FIXED)';
+//     return '(FIXED 1306)';
 // });
 CP0Auto.insertHex('f86000', 16, 'SETGLOBVAR');
 // CP0Auto.insertHex('f86100', 11, (slice) => {
 //     let args = slice.readUintNumber(5);
-//     return '(FIXED)';
+//     return '(FIXED 1311)';
 // });
 // 16285696 (DUMMY)
 CP0Auto.insertHex('f90000', 16, 'HASHCU');
@@ -1351,7 +1352,7 @@ CP0Auto.insertHex('fb0700', 16, 'CHANGELIB');
 // 16451584 (DUMMY)
 CP0Auto.insertHex('fe0000', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return '(FIXED 1355)';
 });
 // CP0Auto.insertHex('fef000', 12, (slice) => {
 //     let args = slice.readUintNumber(4);
@@ -1359,12 +1360,12 @@ CP0Auto.insertHex('fe0000', 8, (slice) => {
 // });
 CP0Auto.insertHex('ff0000', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return '(FIXED 1363)';
 });
 // CP0Auto.insertHex('fff000', 16, 'SETCPX');
 // CP0Auto.insertHex('fff100', 8, (slice) => {
 //     let args = slice.readUintNumber(8);
-//     return '(FIXED)';
+//     return '(FIXED 1368)';
 // });
 
 export { CP0Auto }
