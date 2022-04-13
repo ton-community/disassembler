@@ -1,6 +1,13 @@
 import { BN } from 'bn.js';
 import { Address, TonClient, Cell, Slice, BitString } from 'ton'
 import { CP0Auto } from './codepages/cp0.generated';
+import { Codepage } from './structs/codepage';
+
+let codepage: Codepage = CP0Auto
+
+export function setCodepage(cp: Codepage) {
+    codepage = cp
+}
 
 export function decompile(slice: Slice, indent?: number) {
     let result = '';
@@ -15,7 +22,7 @@ export function decompile(slice: Slice, indent?: number) {
         let opCodePart = slice.readBit()
         opCode += opCodePart ? '1' : '0'
 
-        let matches = CP0Auto.find(opCode)
+        let matches = codepage.find(opCode)
         if (matches.length > 1) {
             continue;
         }
@@ -30,7 +37,8 @@ export function decompile(slice: Slice, indent?: number) {
             continue;
         }
 
-        let op = CP0Auto.getOp(opCode)
+        let op = codepage.getOp(opCode)
+        // result += parseInt(opCode, 2).toString(16) + ' ';
         opCode = ''
         if (!op) {
             append('NULL')
@@ -41,29 +49,40 @@ export function decompile(slice: Slice, indent?: number) {
         } else if (typeof op === 'function') {
             append(op(slice, indent || 0))
         }
+        if (((slice as any).bits as any).length == (slice as any).bits.currentOffset && (slice as any).refs.length > 0) {
+            slice = slice.readRef();
+        }
     }
     return result;
 }
 
-export async function loadSource() {
-    let client = new TonClient({
-        endpoint: 'https://scalable-api.tonwhales.com/jsonRPC'
-    })
-
-    let state = await client.getContractState(Address.parseFriendly('Ef-kkdY_B7p-77TLn2hUhM6QidWrrsl8FYWCIvBMpZKprKDH').address)
-    if (!state.code) {
-        console.error('code not found')
-        return
+export function decompileMethodsMap(slice: Slice, keySize: number, indent?: number) {
+    let methodsMap = slice.readDict(19, (slice) => {
+        return decompile(slice, (indent || 0) + 4);
+    });
+    let result = '';
+    const append = (txt: string) => {
+        if (indent) {
+            for (let i = 0; i < indent; i++) result += ' ';
+        }
+        result += txt + '\n';
+    };
+    append('(:methods');
+    indent = (indent || 0) + 2
+    for (let [key, code] of methodsMap) {
+        let cell = new Cell();
+        cell.bits.writeUint(new BN(key), 19);
+        append(`${cell.beginParse().readIntNumber(19)}: \n${code}`);
     }
+    result = result.slice(0, -1); // remove trailing newline
+    indent -= 2;
+    append(')');
+    result = result.slice(0, -1); // remove trailing newline
+    return result;
+}
 
-    // at this point we need to realize if the code is linked list or hashmap
-
-    let codeCell = Cell.fromBoc(state.code)[0]
-    // let data = parseDict(codeCell.beginParse(), 4, (slice) => {
-    //     return slice
-    // })
-
-    let slice = codeCell.beginParse()
+export async function fromCode(cell: Cell) {
+    let slice = cell.beginParse()
     let header = slice.readUintNumber(16)
     if (header !== 0xff00) {
         throw new Error('unsupported codepage');
@@ -71,17 +90,5 @@ export async function loadSource() {
 
     let result = 'SETCP0\n'
     result += decompile(slice);
-
-    console.log(result);
-
-    let methodsMap = slice.readDict(19, (slice) => {
-        let decompiled = decompile(slice);
-        console.log((slice as any).refs.length);
-        return decompiled;
-    });
-    for (let [key, code] of methodsMap) {
-        let cell = new Cell();
-        cell.bits.writeUint(new BN(key), 19);
-        console.log(`${cell.beginParse().readIntNumber(19)}: \n${code}`);
-    }
+    return result;
 }

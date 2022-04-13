@@ -1,118 +1,158 @@
-import { Slice } from 'ton';
-import { decompile } from '../decompiler';
+import { Cell, Slice } from 'ton';
+import { decompile, decompileMethodsMap } from '../decompiler';
 import { Codepage } from '../structs/codepage';
+
+function fetchSubslice(slice: Slice, bits: number, refs?: number) {
+    let subcell = new Cell();
+    for (let i = 0; i < bits; i++) {
+        subcell.bits.writeBit(slice.readBit());
+    }
+    for (let i = 0; i < (refs || 0); i++) {
+        subcell.refs.push(slice.readCell())
+    }
+    return subcell.beginParse();
+}
+
 
 const CP0Auto = new Codepage()
 
 CP0Auto.insertHex('0', 4, (slice) => {
-    let n = slice.readUintNumber(4)
+    let n = slice.readUintNumber(4);
     if (n == 0) {
-        return `NOP`
+        return `NOP`;
     }
-    return `s0 s${n} XCHG`
+    return `s0 s${n} XCHG`;
 })
 CP0Auto.insertHex('1', 4, (slice) => {
-    let n = slice.readUintNumber(4)
-    return `s1 s${n} XCHG`
+    let n = slice.readUintNumber(4);
+    return `s1 s${n} XCHG`;
 })
 CP0Auto.insertHex('2', 4, (slice) => {
-    let n = slice.readUintNumber(4)
-    return `s${n} PUSH`
+    let n = slice.readUintNumber(4);
+    return `s${n} PUSH`;
 })
 CP0Auto.insertHex('3', 4, (slice) => {
-    let value = slice.readUintNumber(4)
-    return `s${value} POP`
+    let value = slice.readUintNumber(4);
+    return `s${value} POP`;
 })
 CP0Auto.insertHex('4', 4, (slice) => {
-    let i = slice.readUintNumber(4)
-    let j = slice.readUintNumber(4)
-    let k = slice.readUintNumber(4)
-    return `s${i} s${j} s${k} XCHG3`
+    let i = slice.readUintNumber(4);
+    let j = slice.readUintNumber(4);
+    let k = slice.readUintNumber(4);
+    return `s${i} s${j} s${k} XCHG3`;
 })
 CP0Auto.insertHex('50', 8, (slice) => {
-    let i = slice.readUintNumber(4)
-    let j = slice.readUintNumber(4)
-    return `s${i} s${j} XCHG2`
+    let i = slice.readUintNumber(4);
+    let j = slice.readUintNumber(4);
+    return `s${i} s${j} XCHG2`;
 })
 CP0Auto.insertHex('51', 8, (slice) => {
-    let i = slice.readUintNumber(4)
-    let j = slice.readUintNumber(4)
-    return `s${i} s${j} XCPU`
+    let i = slice.readUintNumber(4);
+    let j = slice.readUintNumber(4);
+    return `s${i} s${j} XCPU`;
 })
 CP0Auto.insertHex('52', 8, (slice) => {
-    let i = slice.readUintNumber(4)
-    let j = slice.readUintNumber(4)
-    return `s${i} s${j-1} PUXC`
+    let i = slice.readUintNumber(4);
+    let j = slice.readUintNumber(4);
+    return `s${i} s${j-1} PUXC`;
 })
 CP0Auto.insertHex('53', 8, (slice) => {
-    let args = slice.readUintNumber(8)
-    let first = args >> 4 & 0xf
-    let second = args & 0xf
-    return `s${first} s${second} PUSH2`
+    let args = slice.readUintNumber(8);
+    let first = args >> 4 & 0xf;
+    let second = args & 0xf;
+    return `s${first} s${second} PUSH2`;
 })
 CP0Auto.insertHex('540', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let first = args >> 8 & 0xf;
+    let second = args >> 4 & 0xf;
+    let third = args & 0xf;
+    return `s${first} s${second} s${third} XCHG3`;
 });
 CP0Auto.insertHex('541', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let i = args >> 8 & 0xf;
+    let j = args >> 4 & 0xf;
+    let k = args & 0xf;
+    return `${i} ${j} ${k} XC2PU`;
 });
 CP0Auto.insertHex('542', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let i = args >> 8 & 0xf;
+    let j = args >> 4 & 0xf;
+    let k = args & 0xf;
+    return `${i} ${j} ${k-1} XCPUXC`;
 });
 CP0Auto.insertHex('543', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let i = args >> 8 & 0xf;
+    let j = args >> 4 & 0xf;
+    let k = args & 0xf;
+    return `${i} ${j} ${k} XCPU2`;
 });
 CP0Auto.insertHex('544', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let i = args >> 8 & 0xf;
+    let j = args >> 4 & 0xf;
+    let k = args & 0xf;
+    return `${i} ${j-1} ${k-1} PUXC2`;
 });
 CP0Auto.insertHex('545', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let i = args >> 8 & 0xf;
+    let j = args >> 4 & 0xf;
+    let k = args & 0xf;
+    return `${i} ${j-1} ${k-1} PUXCPU`;
 });
 CP0Auto.insertHex('546', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let i = args >> 8 & 0xf;
+    let j = args >> 4 & 0xf;
+    let k = args & 0xf;
+    return `${i} ${j-1} ${k-2} PU2XC`;
 });
 CP0Auto.insertHex('547', 12, (slice) => {
     let args = slice.readUintNumber(12);
-    return '(FIXED)';
+    let i = args >> 8 & 0xf;
+    let j = args >> 4 & 0xf;
+    let k = args & 0xf;
+    return `${i} ${j} ${k} PUSH3`;
 });
 // 5537792 (DUMMY)
 CP0Auto.insertHex('55', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let i = args >> 4 & 0xf;
+    let j = args & 0xf; 
+    return `${i+1} ${j+1} BLKSWAP`;
 });
 CP0Auto.insertHex('56', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return `s${args} PUSH`;
 });
 CP0Auto.insertHex('57', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    return `s${args} POP`;
 });
-// CP0Auto.insertHex('58', 8, 'ROT');
-// CP0Auto.insertHex('59', 8, 'ROTREV');
-// CP0Auto.insertHex('5a', 8, '2SWAP');
-// CP0Auto.insertHex('5b', 8, '2DROP');
-// CP0Auto.insertHex('5c', 8, '2DUP');
-// CP0Auto.insertHex('5d', 8, '2OVER');
+CP0Auto.insertHex('58', 8, 'ROT');
+CP0Auto.insertHex('59', 8, 'ROTREV');
+CP0Auto.insertHex('5a', 8, '2SWAP');
+CP0Auto.insertHex('5b', 8, '2DROP');
+CP0Auto.insertHex('5c', 8, '2DUP');
+CP0Auto.insertHex('5d', 8, '2OVER');
 CP0Auto.insertHex('5e', 8, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let i = args >> 4 & 0xf;
+    let j = args & 0xf; 
+    return `${i+2} ${j} REVERSE`;
 });
-CP0Auto.insertHex('5f0', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+CP0Auto.insertHex('5f', 8, (slice) => {
+    let i = slice.readUintNumber(4);
+    let j = slice.readUintNumber(4);
+    if (i === 0) {
+        return `${j} BLKDROP`;
+    }
+    return `${i} ${j} BLKPUSH`;
 });
-// CP0Auto.insertHex('5f1000', 8, (slice) => {
-//     let args = slice.readUintNumber(8);
-//     return '(FIXED)';
-// });
 CP0Auto.insertHex('600000', 8, 'PICK');
 CP0Auto.insertHex('610000', 8, 'ROLL');
 CP0Auto.insertHex('620000', 8, 'ROLLREV');
@@ -126,43 +166,59 @@ CP0Auto.insertHex('690000', 8, 'CHKDEPTH');
 CP0Auto.insertHex('6a0000', 8, 'ONLYTOPX');
 CP0Auto.insertHex('6b0000', 8, 'ONLYX');
 // 7077888 (DUMMY)
-// CP0Auto.insertHex('6c1000', 8, (slice) => {
-//     let args = slice.readUintNumber(8);
-//     return '(FIXED)';
-// });
+CP0Auto.insertHex('6c', 8, (slice) => {
+    let i = slice.readUintNumber(4);
+    let j = slice.readUintNumber(4);
+    return `${i} ${j} BLKDROP2`;
+});
 CP0Auto.insertHex('6d0000', 8, 'PUSHNULL');
 CP0Auto.insertHex('6e0000', 8, 'ISNULL');
 CP0Auto.insertHex('6f0', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let n = slice.readUintNumber(4);
+    if (n === 0) {
+        return `NIL`;
+    }
+    if (n === 1) {
+        return `SINGLE`;
+    }
+    if (n === 2) {
+        return `PAIR`;
+    }
+    if (n === 3) {
+        return `TRIPLE`;
+    }
+    return `${n} TUPLE`;
 });
 CP0Auto.insertHex('6f1', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let k = slice.readUintNumber(4);
+    return `${k} INDEX`;
 });
 CP0Auto.insertHex('6f2', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let k = slice.readUintNumber(4);
+    return `${k} UNTUPLE`;
 });
 CP0Auto.insertHex('6f3', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let k = slice.readUintNumber(4);
+    if (k === 0) {
+        return `CHKTUPLE`;
+    }
+    return `${k} UNPACKFIRST`;
 });
 CP0Auto.insertHex('6f4', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let k = slice.readUintNumber(4);
+    return `${k} EXPLODE`;
 });
 CP0Auto.insertHex('6f5', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let k = slice.readUintNumber(4);
+    return `${k} SETINDEX`;
 });
 CP0Auto.insertHex('6f6', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let k = slice.readUintNumber(4);
+    return `${k} INDEXQ`;
 });
 CP0Auto.insertHex('6f7', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let k = slice.readUintNumber(4);
+    return `${k} SETINDEXQ`;
 });
 CP0Auto.insertHex('6f80', 16, 'TUPLEVAR');
 CP0Auto.insertHex('6f81', 16, 'INDEXVAR');
@@ -189,77 +245,84 @@ CP0Auto.insertHex('6fa6', 16, 'NULLROTRIF2');
 CP0Auto.insertHex('6fa7', 16, 'NULLROTRIFNOT2');
 // 7317504 (DUMMY)
 CP0Auto.insertHex('6fb', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let i = slice.readUintNumber(2);
+    let j = slice.readUintNumber(2);
+    return `${i} ${j} INDEX2`;
 });
 // CP0Auto.insertHex('6fc', 10, (slice) => {
-//     let args = slice.readUintNumber(6);
-//     return '(FIXED)';
+//     let i = slice.readUintNumber(2);
+//     let j = slice.readUintNumber(2);
+//     let k = slice.readUintNumber(2);
+//     return `${i} ${j} ${k} INDEX3`;
 // });
 CP0Auto.insertHex('7', 4, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+    let args = slice.readIntNumber(4);
+    return `${args} PUSHINT`;
 });
 CP0Auto.insertHex('80', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('810000', 8, (slice) => {
-    let args = slice.readUintNumber(16);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('820000', 8, (slice) => {
-    let args = slice.readUintNumber(5);
-    return '(EXT)';
-});
-// 8583168 (DUMMY)
-CP0Auto.insertHex('830000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
-// CP0Auto.insertHex('83ff00', 16, 'PUSHNAN');
-CP0Auto.insertHex('840000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
-});
+    let x = slice.readIntNumber(8)
+    return `${x} PUSHINT`;
+})
+CP0Auto.insertHex('81', 8, (slice) => {
+    let x = slice.readIntNumber(16)
+    return `${x} PUSHINT`;
+})
+CP0Auto.insertHex('82', 8, (slice) => {
+    let len = slice.readUintNumber(5)
+    let n = 8 * len + 19
+    let x = slice.readIntNumber(n)
+    return `${x} PUSHINT`;
+})
+CP0Auto.insertHex('83', 8, (slice) => {
+    let x = slice.readUintNumber(8) + 1
+    return `${x} PUSHPOW2`;
+})
+CP0Auto.insertHex('84', 8, (slice) => {
+    let x = slice.readUintNumber(8) + 1;
+    return `${x} PUSHPOW2DEC`;
+})
 CP0Auto.insertHex('850000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readUintNumber(8) + 1;
+    return `${x} PUSHNEGPOW2`;
 });
 // 8781824 (DUMMY)
-CP0Auto.insertHex('880000', 8, (slice) => {
-    let args = slice.readUintNumber(0);
-    return '(EXT)';
-});
-CP0Auto.insertHex('890000', 8, (slice) => {
-    let args = slice.readUintNumber(0);
-    return '(EXT)';
-});
-CP0Auto.insertHex('8a0000', 8, (slice) => {
-    let args = slice.readUintNumber(0);
-    return '(EXT)';
-});
-CP0Auto.insertHex('8b0000', 8, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(EXT)';
+CP0Auto.insertHex('88', 8, 'PUSHREF');
+CP0Auto.insertHex('89', 8, 'PUSHREFSLICE');
+CP0Auto.insertHex('8a', 8, 'PUSHREFCONT');
+CP0Auto.insertHex('8b', 8, (slice) => {
+    let x = slice.readUintNumber(4);
+    let len = 8 * x + 4;
+    let subslice = fetchSubslice(slice, len);
+    return 'PUSHSLICE';
 });
 CP0Auto.insertHex('8c0000', 8, (slice) => {
-    let args = slice.readUintNumber(7);
-    return '(EXT)';
+    let r = slice.readUintNumber(2) + 1;
+    let xx = slice.readUintNumber(5);
+    let subslice = fetchSubslice(slice, 8 * xx + 1, r);
+    return 'PUSHSLICE';
 });
-CP0Auto.insertHex('8d0000', 8, (slice) => {
-    let args = slice.readUintNumber(10);
-    return '(EXT)';
+CP0Auto.insertHex('8d', 8, (slice) => {
+    let r = slice.readUintNumber(3);
+    let xx = slice.readUintNumber(7);
+    let subslice = fetchSubslice(slice, 8 * xx + 6, r);
+    return 'PUSHSLICE';
 });
 // 9281536 (DUMMY)
-CP0Auto.insertHex('8e0000', 7, (slice) => {
+CP0Auto.insertHex('8E', 7, (slice, indent) => {
     let args = slice.readUintNumber(9);
-    return '(EXT)';
-});
-CP0Auto.insertHex('900000', 4, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(EXT)';
-});
+    let refs = (args >> 7) & 3;
+    let dataBytes = (args & 127) * 8;
+
+    let subslice = fetchSubslice(slice, dataBytes, refs);
+    // <{\n${decompile(slice.readRef(), indent + 2)}${new Array(indent).fill(' ').join('')}}> PUSHCONT`
+    return `<{\n${decompile(subslice, indent + 2)}${new Array(indent).fill(' ').join('')}}> PUSHCONT`
+})
+CP0Auto.insertHex('9', 4, (slice, indent) => {
+    let len = slice.readUintNumber(4) * 8;
+    let subslice = fetchSubslice(slice, len);
+    return `<{\n${decompile(subslice, indent + 2)}${new Array(indent).fill(' ').join('')}}> PUSHCONT`
+})
+
 CP0Auto.insertHex('a00000', 8, 'ADD');
 CP0Auto.insertHex('a10000', 8, 'SUB');
 CP0Auto.insertHex('a20000', 8, 'SUBR');
@@ -267,57 +330,62 @@ CP0Auto.insertHex('a30000', 8, 'NEGATE');
 CP0Auto.insertHex('a40000', 8, 'INC');
 CP0Auto.insertHex('a50000', 8, 'DEC');
 CP0Auto.insertHex('a60000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} ADDCONST`;
 });
 CP0Auto.insertHex('a70000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} MULCONST`;
 });
 CP0Auto.insertHex('a80000', 8, 'MUL');
-CP0Auto.insertHex('a90000', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+CP0Auto.insertHex('A9', 8, (slice) => {
+    let m = slice.readBit();
+    let s = slice.readUintNumber(2);
+    let c = slice.readBit();
+    let d = slice.readUintNumber(2);
+    let f = slice.readUintNumber(2);
+    let opName = '';
+    if (m) {
+        opName += 'MUL';
+    }
+    if (s == 0) {
+        opName += 'DIV';
+    } else {
+        if (s == 1) {
+            opName = 'RSHIFT';
+        } else {
+            opName = 'LSHIFT';
+        }
+        if (!c) {
+            opName += ' s0';
+        } else {
+            let shift = slice.readUintNumber(8) + 1;
+            opName += ` ${shift}`;
+        }
+    }
+    if (d === 1) {
+        opName += ' QOUT';
+    } else if (d === 2) {
+        opName += ' REM';
+    } else if (d === 3) {
+        opName += ' BOTH';
+    }
+    if (f === 1) {
+        opName += ' R';
+    } else if (f == 2) {
+        opName += ' C';
+    }
+    return opName;
 });
 // 11079680 (DUMMY)
-CP0Auto.insertHex('a92000', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('a93000', 12, (slice) => {
-    let args = slice.readUintNumber(12);
-    return '(FIXED)';
-});
-// 11091968 (DUMMY)
-CP0Auto.insertHex('a98000', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-// 11112448 (DUMMY)
-CP0Auto.insertHex('a9a000', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('a9b000', 12, (slice) => {
-    let args = slice.readUintNumber(12);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('a9c000', 12, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('a9d000', 12, (slice) => {
-    let args = slice.readUintNumber(12);
-    return '(FIXED)';
-});
 // 11132928 (DUMMY)
 CP0Auto.insertHex('aa0000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} LSHIFT`;
 });
 CP0Auto.insertHex('ab0000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} RSHIFT`;
 });
 CP0Auto.insertHex('ac0000', 8, 'LSHIFT');
 CP0Auto.insertHex('ad0000', 8, 'RSHIFT');
@@ -328,12 +396,12 @@ CP0Auto.insertHex('b10000', 8, 'OR');
 CP0Auto.insertHex('b20000', 8, 'XOR');
 CP0Auto.insertHex('b30000', 8, 'NOT');
 CP0Auto.insertHex('b40000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} FITS`;
 });
 CP0Auto.insertHex('b50000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} UFITS`;
 });
 CP0Auto.insertHex('b60000', 16, 'FITSX');
 CP0Auto.insertHex('b60100', 16, 'UFITSX');
@@ -352,46 +420,61 @@ CP0Auto.insertHex('b7a300', 16, 'QNEGATE');
 CP0Auto.insertHex('b7a400', 16, 'QINC');
 CP0Auto.insertHex('b7a500', 16, 'QDEC');
 CP0Auto.insertHex('b7a600', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} QADDCONST`;
 });
 CP0Auto.insertHex('b7a700', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} QMULCONST`;
 });
 CP0Auto.insertHex('b7a800', 16, 'QMUL');
-CP0Auto.insertHex('b7a900', 20, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-// 12036368 (DUMMY)
-CP0Auto.insertHex('b7a920', 20, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-// 12036400 (DUMMY)
-CP0Auto.insertHex('b7a980', 20, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-// 12036496 (DUMMY)
-CP0Auto.insertHex('b7a9a0', 20, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
-});
-// 12036528 (DUMMY)
-CP0Auto.insertHex('b7a9c0', 20, (slice) => {
-    let args = slice.readUintNumber(4);
-    return '(FIXED)';
+CP0Auto.insertHex('b7a900', 16, (slice) => {
+    let m = slice.readBit();
+    let s = slice.readUintNumber(2);
+    let c = slice.readBit();
+    let d = slice.readUintNumber(2);
+    let f = slice.readUintNumber(2);
+    let opName = 'Q';
+    if (m) {
+        opName += 'MUL';
+    }
+    if (s == 0) {
+        opName += 'DIV';
+    } else {
+        if (s == 1) {
+            opName = 'RSHIFT';
+        } else {
+            opName = 'LSHIFT';
+        }
+        if (!c) {
+            opName += ' s0';
+        } else {
+            let shift = slice.readUintNumber(8) + 1;
+            opName += ` ${shift}`;
+        }
+    }
+    if (d === 1) {
+        opName += ' QOUT';
+    } else if (d === 2) {
+        opName += ' REM';
+    } else if (d === 3) {
+        opName += ' BOTH';
+    }
+    if (f === 1) {
+        opName += ' R';
+    } else if (f == 2) {
+        opName += ' C';
+    }
+    return opName;
 });
 // 12036560 (DUMMY)
 CP0Auto.insertHex('b7aa00', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} QLSHIFT`;
 });
 CP0Auto.insertHex('b7ab00', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} QLSHIFT`;
 });
 CP0Auto.insertHex('b7ac00', 16, 'QLSHIFT');
 CP0Auto.insertHex('b7ad00', 16, 'QRSHIFT');
@@ -402,12 +485,12 @@ CP0Auto.insertHex('b7b100', 16, 'QOR');
 CP0Auto.insertHex('b7b200', 16, 'QXOR');
 CP0Auto.insertHex('b7b300', 16, 'QNOT');
 CP0Auto.insertHex('b7b400', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} QFITS`;
 });
 CP0Auto.insertHex('b7b500', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} QUFITS`;
 });
 CP0Auto.insertHex('b7b600', 24, 'QFITSX');
 CP0Auto.insertHex('b7b601', 24, 'QUFITSX');
@@ -428,20 +511,20 @@ CP0Auto.insertHex('b7bd00', 16, 'QNEQ');
 CP0Auto.insertHex('b7be00', 16, 'QGEQ');
 CP0Auto.insertHex('b7bf00', 16, 'QCMP');
 CP0Auto.insertHex('b7c000', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} QEQINT`;
 });
 CP0Auto.insertHex('b7c100', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} QLESSINT`;
 });
 CP0Auto.insertHex('b7c200', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} QGTINT`;
 });
 CP0Auto.insertHex('b7c300', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} QNEQINT`;
 });
 // 12043264 (DUMMY)
 CP0Auto.insertHex('b80000', 8, 'SGN');
@@ -453,20 +536,20 @@ CP0Auto.insertHex('bd0000', 8, 'NEQ');
 CP0Auto.insertHex('be0000', 8, 'GEQ');
 CP0Auto.insertHex('bf0000', 8, 'CMP');
 CP0Auto.insertHex('c00000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} EQINT`;
 });
 CP0Auto.insertHex('c10000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} LESSINT`;
 });
 CP0Auto.insertHex('c20000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} GTINT`;
 });
 CP0Auto.insertHex('c30000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let x = slice.readIntNumber(8);
+    return `${x} NEQINT`;
 });
 CP0Auto.insertHex('c40000', 8, 'ISNAN');
 CP0Auto.insertHex('c50000', 8, 'CHKNAN');
@@ -494,23 +577,43 @@ CP0Auto.insertHex('c71300', 16, 'SDCNTTRAIL1');
 CP0Auto.insertHex('c80000', 8, 'NEWC');
 CP0Auto.insertHex('c90000', 8, 'ENDC');
 CP0Auto.insertHex('ca0000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8) + 1;
+    return `${cc+1} STI`;
 });
 CP0Auto.insertHex('cb0000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8) + 1;
+    return `${cc+1} STU`;
 });
 CP0Auto.insertHex('cc0000', 8, 'STREF');
 CP0Auto.insertHex('cd0000', 8, 'ENDCST');
 CP0Auto.insertHex('ce0000', 8, 'STSLICE');
 CP0Auto.insertHex('cf0000', 13, (slice) => {
     let args = slice.readUintNumber(3);
-    return '(FIXED)';
+    let sgnd = !(args & 1);
+    let s = "ST";
+    s += sgnd ? 'I' : 'U';
+    s += 'X';
+    if (args & 2) {
+        s += 'R';
+    }
+    if (args & 4) {
+        s += 'Q';
+    }
+    return s;
 });
 CP0Auto.insertHex('cf0800', 13, (slice) => {
     let args = slice.readUintNumber(11);
-    return '(FIXED)';
+    let bits = (args & 0xff) + 1;
+    let sgnd = !(args & 0x100);
+    let s = "ST";
+    s += (sgnd ? 'I' : 'U');
+    if (args & 0x200) {
+        s += 'R';
+    }
+    if (args & 0x400) {
+        s += 'Q';
+    }
+    return `${bits} ${s}`;
 });
 CP0Auto.insertHex('cf1000', 16, 'STREF');
 CP0Auto.insertHex('cf1100', 16, 'STBREF');
@@ -529,15 +632,20 @@ CP0Auto.insertHex('cf1d00', 16, 'STBREFRQ');
 CP0Auto.insertHex('cf1e00', 16, 'STSLICERQ');
 CP0Auto.insertHex('cf1f00', 16, 'STBRQ');
 CP0Auto.insertHex('cf2000', 15, (slice) => {
-    let args = slice.readUintNumber(1);
-    return '(EXT)';
+    let flag = slice.readUintNumber(1);
+    if (flag === 0) {
+        return 'STREFCONST';
+    } else {
+        return 'STREF2CONST';
+    }
 });
 // 13574656 (DUMMY)
 CP0Auto.insertHex('cf2300', 16, 'ENDXC');
 // 13575168 (DUMMY)
 CP0Auto.insertHex('cf2800', 14, (slice) => {
     let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    let sgnd = !(args & 1);
+    return `ST${(sgnd ? 'I' : 'U')}LE${((args & 2) ? '8' : '4')}`;
 });
 // 13577216 (DUMMY)
 CP0Auto.insertHex('cf3000', 16, 'BDEPTH');
@@ -549,15 +657,15 @@ CP0Auto.insertHex('cf3500', 16, 'BREMBITS');
 CP0Auto.insertHex('cf3600', 16, 'BREMREFS');
 CP0Auto.insertHex('cf3700', 16, 'BREMBITREFS');
 CP0Auto.insertHex('cf3800', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} BCHKBITS`;
 });
 CP0Auto.insertHex('cf3900', 16, 'BCHKBITS');
 CP0Auto.insertHex('cf3a00', 16, 'BCHKREFS');
 CP0Auto.insertHex('cf3b00', 16, 'BCHKBITREFS');
 CP0Auto.insertHex('cf3c00', 16, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} BCHKBITSQ`;
 });
 CP0Auto.insertHex('cf3d00', 16, 'BCHKBITSQ');
 CP0Auto.insertHex('cf3e00', 16, 'BCHKREFSQ');
@@ -567,44 +675,49 @@ CP0Auto.insertHex('cf4100', 16, 'STONES');
 CP0Auto.insertHex('cf4200', 16, 'STSAME');
 // 13583104 (DUMMY)
 CP0Auto.insertHex('cf8000', 9, (slice) => {
-    let args = slice.readUintNumber(5);
-    return '(EXT)';
+    let refs = slice.readUintNumber(2);
+    let dataBits = slice.readUintNumber(3) * 8 + 1;
+    let subslice = fetchSubslice(slice, dataBits, refs);
+    return `STSLICECONST`;
 });
 CP0Auto.insertHex('d00000', 8, 'CTOS');
 CP0Auto.insertHex('d10000', 8, 'ENDS');
 CP0Auto.insertHex('d20000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} LDI`;
 });
 CP0Auto.insertHex('d30000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} LDU`;
 });
 CP0Auto.insertHex('d40000', 8, 'LDREF');
 CP0Auto.insertHex('d50000', 8, 'LDREFRTOS');
 CP0Auto.insertHex('d60000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED)';
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} LDSLICE`;
 });
-CP0Auto.insertHex('d70000', 13, (slice) => {
-    let args = slice.readUintNumber(3);
-    return '(FIXED)';
-});
-CP0Auto.insertHex('d70800', 13, (slice) => {
-    let args = slice.readUintNumber(11);
-    return '(FIXED)';
+CP0Auto.insertHex('d70', 12, (slice) => {
+    let longerVersion = slice.readBit();
+    let quiet = slice.readBit();
+    let preload = slice.readBit();
+    let sign = slice.readBit();
+
+    return `${longerVersion ? ((slice.readUintNumber(8) + 1) + ' ') : ''}${preload ? 'PLD' : 'LD'}${sign ? 'U' : 'I'}${quiet ? 'Q' : ''}`;
 });
 CP0Auto.insertHex('d71000', 13, (slice) => {
     let args = slice.readUintNumber(3);
     return '(FIXED)';
 });
 CP0Auto.insertHex('d71800', 14, (slice) => {
-    let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    let quiet = slice.readBit();
+    let preload = slice.readBit();
+    return `${preload ? 'PLD' : 'LD'}SLICEX${quiet ? 'Q' : ''}`;
 });
 CP0Auto.insertHex('d71c00', 14, (slice) => {
-    let args = slice.readUintNumber(10);
-    return '(FIXED)';
+    let quiet = slice.readBit();
+    let preload = slice.readBit();
+    let cc = slice.readUintNumber(8);
+    return `${cc+1} ${preload ? 'PLD' : 'LD'}SLICEX${quiet ? 'Q' : ''}`;
 });
 CP0Auto.insertHex('d72000', 16, 'SDCUTFIRST');
 CP0Auto.insertHex('d72100', 16, 'SDSKIPFIRST');
@@ -616,7 +729,7 @@ CP0Auto.insertHex('d72600', 16, 'SDBEGINSX');
 CP0Auto.insertHex('d72700', 16, 'SDBEGINSXQ');
 CP0Auto.insertHex('d72800', 13, (slice) => {
     let args = slice.readUintNumber(8);
-    return '(EXT)';
+    return 'SDBEGINS';
 });
 CP0Auto.insertHex('d73000', 16, 'SCUTFIRST');
 CP0Auto.insertHex('d73100', 16, 'SSKIPFIRST');
@@ -691,8 +804,9 @@ CP0Auto.insertHex('db3900', 16, 'RETVARARGS');
 CP0Auto.insertHex('db3a00', 16, 'JMPXVARARGS');
 CP0Auto.insertHex('db3b00', 16, 'CALLCCVARARGS');
 CP0Auto.insertHex('db3c00', 16, (slice) => {
-    let args = slice.readUintNumber(0);
-    return '(EXT)';
+    slice.readRef();
+
+    return 'CALLREF';
 });
 CP0Auto.insertHex('db3d00', 16, (slice) => {
     let args = slice.readUintNumber(0);
@@ -968,8 +1082,8 @@ CP0Auto.insertHex('f2c000', 13, (slice) => {
     return '(FIXED)';
 });
 CP0Auto.insertHex('f2c800', 13, (slice) => {
-    let args = slice.readUintNumber(11);
-    return '(FIXED)';
+    let x = slice.readUintNumber(11);
+    return `${x} THROWARG`;
 });
 CP0Auto.insertHex('f2d000', 13, (slice) => {
     let args = slice.readUintNumber(11);
@@ -1118,14 +1232,23 @@ CP0Auto.insertHex('f49a00', 11, (slice) => {
     let args = slice.readUintNumber(5);
     return '(FIXED)';
 });
-CP0Auto.insertHex('f4a000', 14, (slice) => {
-    let args = slice.readUintNumber(2);
-    return '(FIXED)';
+CP0Auto.insertHex('f4a000', 13, (slice, indent) => {
+    let push = slice.readBit();
+    if (push) { // f4a4
+        let subslice = fetchSubslice(slice, 0, 1);
+        let keyLen = slice.readUintNumber(10);
+        let decompiled: string
+        try {
+            decompiled = decompileMethodsMap(subslice.clone(), keyLen, indent)
+        } catch {
+            decompiled = subslice.toCell().bits.toFiftHex();
+        }
+        return `${decompiled} ${keyLen} DICTPUSHCONST`;
+    }
+    let exec = slice.readBit();
+    let usign = slice.readBit();
+    return `DICT${usign ? 'U' : 'I'}GET${exec ? 'EXEC' : 'JMP'}`;
 });
-// CP0Auto.insertHex('f4a400', 13, (slice) => {
-//     let args = slice.readUintNumber(11);
-//     return '(EXT)';
-// });
 CP0Auto.insertHex('f4a800', 16, 'PFXDICTGETQ');
 CP0Auto.insertHex('f4a900', 16, 'PFXDICTGET');
 CP0Auto.insertHex('f4aa00', 16, 'PFXDICTGETJMP');
@@ -1146,8 +1269,9 @@ CP0Auto.insertHex('f4b500', 13, (slice) => {
 });
 // 16037888 (DUMMY)
 CP0Auto.insertHex('f4bc00', 14, (slice) => {
-    let args = slice.readUintNumber(2);
-    return '(FIXED)';
+    let exec = slice.readBit();
+    let unsigned = slice.readBit();
+    return `DICT${unsigned ? 'U' : 'I'}GET${exec ? 'EXEC' : 'JMP'}Z`;
 });
 // 16039936 (DUMMY)
 CP0Auto.insertHex('f80000', 16, 'ACCEPT');

@@ -11,9 +11,6 @@ export class Codepage {
         if (prefix.length < len) {
             prefix = new Array(len - prefix.length).fill('0').join('') + prefix;
         }
-        if (prefix.startsWith('11011111')) {
-            console.log(hex, len, op);
-        }
         this._trie.insert(prefix, op);
     }
 
