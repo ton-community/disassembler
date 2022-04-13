@@ -81,7 +81,7 @@ export function decompileMethodsMap(slice: Slice, keySize: number, indent?: numb
     return result;
 }
 
-export async function fromCode(cell: Cell) {
+export function fromCode(cell: Cell) {
     let slice = cell.beginParse()
     let header = slice.readUintNumber(16)
     if (header !== 0xff00) {
