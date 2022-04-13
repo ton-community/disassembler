@@ -1,7 +1,7 @@
 # TON VM Disassembler
 Provides Fift-like code from smart contract source
 ## Usage
-```
+```typescript
 let client = new TonClient({
     endpoint: 'https://scalable-api.tonwhales.com/jsonRPC'
 });
