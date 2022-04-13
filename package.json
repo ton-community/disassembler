@@ -7,10 +7,12 @@
   "scripts": {
     "build": "rm -rf dist/ && tsc"
   },
-  "files": ["dist"],
+  "files": [
+    "dist"
+  ],
   "dependencies": {
     "bn.js": "^5.2.0",
-    "ton": "^6.5.1"
+    "ton": "^9.3.1"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
