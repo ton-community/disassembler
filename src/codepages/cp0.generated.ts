@@ -1035,8 +1035,8 @@ CP0Auto.insertHex('ee0000', 8, (slice) => {
 });
 // 15663104 (DUMMY)
 CP0Auto.insertHex('f00000', 8, (slice) => {
-    let args = slice.readUintNumber(8);
-    return '(FIXED 1039)';
+    let n = slice.readUintNumber(8);
+    return `${n} CALLDICT`;
 });
 CP0Auto.insertHex('f10000', 10, (slice) => {
     let args = slice.readUintNumber(14);
@@ -1106,15 +1106,24 @@ CP0Auto.insertHex('f40500', 16, 'PLDDICT');
 CP0Auto.insertHex('f40600', 16, 'LDDICTQ');
 CP0Auto.insertHex('f40700', 16, 'PLDDICTQ');
 // 15992832 (DUMMY)
-CP0Auto.insertHex('f40a00', 13, (slice) => {
-    let args = slice.readUintNumber(3);
-    return '(FIXED 1111)';
-});
+
+CP0Auto.insertHex('f40a', 16, 'DICTGET');
+CP0Auto.insertHex('f40b', 16, 'DICTGETREF');
+CP0Auto.insertHex('f40c', 16, 'DICTIGET');
+CP0Auto.insertHex('f40d', 16, 'DICTIGETREF');
+CP0Auto.insertHex('f40e', 16, 'DICTUGET');
+CP0Auto.insertHex('f40f', 16, 'DICTUGETREF');
+
 // 15994880 (DUMMY)
-CP0Auto.insertHex('f41200', 13, (slice) => {
-    let args = slice.readUintNumber(3);
-    return '(FIXED 1116)';
-});
+
+// TODO: refactor to conditionals
+CP0Auto.insertHex('f412', 16, 'DICTSET');
+CP0Auto.insertHex('f413', 16, 'DICTSETREF');
+CP0Auto.insertHex('f414', 16, 'DICTISET');
+CP0Auto.insertHex('f415', 16, 'DICTISETREF');
+CP0Auto.insertHex('f416', 16, 'DICTUSET');
+CP0Auto.insertHex('f417', 16, 'DICTUSETREF');
+
 // 15996928 (DUMMY)
 CP0Auto.insertHex('f41a00', 13, (slice) => {
     let args = slice.readUintNumber(3);
@@ -1171,25 +1180,24 @@ CP0Auto.insertHex('f45500', 14, (slice) => {
     return '(FIXED 1171)';
 });
 // 16013312 (DUMMY)
-CP0Auto.insertHex('f45900', 14, (slice) => {
-    let args = slice.readUintNumber(2);
-    return '(FIXED 1176)';
-});
+CP0Auto.insertHex('f459', 16, 'DICTDEL');
+CP0Auto.insertHex('f45A', 16, 'DICTIDEL');
+CP0Auto.insertHex('f45B', 16, 'DICTUDEL');
+
 // 16014336 (DUMMY)
 CP0Auto.insertHex('f46200', 13, (slice) => {
     let args = slice.readUintNumber(3);
     return '(FIXED 1181)';
 });
 // 16017408 (DUMMY)
-CP0Auto.insertHex('f46900', 14, (slice) => {
-    let args = slice.readUintNumber(2);
-    return '(FIXED 1186)';
-});
-// 16018432 (DUMMY)
-CP0Auto.insertHex('f46d00', 14, (slice) => {
-    let args = slice.readUintNumber(2);
-    return '(FIXED 1191)';
-});
+CP0Auto.insertHex('f469', 16, 'DICTGETOPTREF');
+CP0Auto.insertHex('f46A', 16, 'DICTIGETOPTREF');
+CP0Auto.insertHex('f46B', 16, 'DICTUGETOPTREF');
+
+CP0Auto.insertHex('f46d', 16, 'DICTSETGETOPTREF');
+CP0Auto.insertHex('f46e', 16, 'DICTISETGETOPTREF');
+CP0Auto.insertHex('f46f', 16, 'DICTUSETGETOPTREF');
+
 CP0Auto.insertHex('f47', 12, (slice) => {
     let args = slice.readUintNumber(4);
     if (args === 0) {
