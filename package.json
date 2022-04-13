@@ -1,10 +1,11 @@
 {
-  "name": "ton-disassembler",
+  "name": "tvm-disassembler",
+  "description": "Provides Fift-like code from smart contract source",
   "version": "1.0.0",
   "main": "dist/index.js",
   "license": "MIT",
   "scripts": {
-    "build": "tsc"
+    "build": "rm -rf dist/ && tsc"
   },
   "files": ["dist"],
   "dependencies": {
