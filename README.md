@@ -1,5 +1,8 @@
-# TON VM Disassembler
-Provides Fift-like code from smart contract source
+# TON VM Disassembler  
+
+> Provides Fift-like code from smart contract source   
+
+[![Published on npm](https://img.shields.io/npm/v/tvm-disassembler.svg?logo=npm)](https://www.npmjs.com/package/tvm-disassembler)  
 ## Usage
 ```typescript
 let client = new TonClient({
