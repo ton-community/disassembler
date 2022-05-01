@@ -1,6 +1,7 @@
 import { BN } from 'bn.js';
 import { Address, TonClient, Cell, Slice, BitString } from 'ton'
 import { CP0Auto } from './codepages/cp0.generated';
+import { KnownMethods } from './consts/knownMethods';
 import { Codepage } from './structs/codepage';
 
 let codepage: Codepage = CP0Auto
@@ -72,7 +73,8 @@ export function decompileMethodsMap(slice: Slice, keySize: number, indent?: numb
     for (let [key, code] of methodsMap) {
         let cell = new Cell();
         cell.bits.writeUint(new BN(key), 19);
-        append(`${cell.beginParse().readIntNumber(19)}: \n${code}`);
+        let methodId = cell.beginParse().readIntNumber(19);
+        append(`${KnownMethods[methodId] ?? methodId}: \n${code}`);
     }
     result = result.slice(0, -1); // remove trailing newline
     indent -= 2;

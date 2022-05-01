@@ -1,6 +1,7 @@
 import { Address, Cell, TonClient } from 'ton'
 import { fromCode } from './disassembler'
 import { readFileSync, writeFileSync } from 'fs'
+import { compileFift, compileFunc } from 'ton-compiler'
 
 it('should disassemble giver', async () => {
     let client = new TonClient({
@@ -48,7 +49,7 @@ it('should disassemble mint', async () => {
 
     let codeCell = Cell.fromBoc(state.code)[0]
     
-    console.log(fromCode(codeCell))
+    // console.log(fromCode(codeCell))
 })
 
 it('should disassemble nft', async () => {
@@ -64,5 +65,21 @@ it('should disassemble nft', async () => {
 
     let codeCell = Cell.fromBoc(state.code)[0]
     
+    // console.log(fromCode(codeCell))
+})
+
+it('should dump method', async () => {
+    let fiftCode = await compileFunc(`
+        () main() {
+
+        }
+
+        () owner() method_id {
+
+        }
+    `)
+    let code = await compileFift(fiftCode);
+    let codeCell = Cell.fromBoc(code)[0]
+
     console.log(fromCode(codeCell))
 })
