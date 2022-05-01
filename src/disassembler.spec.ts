@@ -35,11 +35,27 @@ it('should disassemble config', async () => {
     // console.log(fromCode(codeCell))
 })
 
-it('should disassemble presale', async () => {
+it('should disassemble mint', async () => {
     let client = new TonClient({
         endpoint: 'https://testnet.tonhubapi.com/jsonRPC'
     })
     let address = Address.parseFriendly('kQCz5AuHThREIDWANfcHpwbWc_g9rblW3qP__0_klue5v2Ay').address
+    let state = await client.getContractState(address)
+    if (!state.code) {
+        console.error('code not found')
+        return
+    }
+
+    let codeCell = Cell.fromBoc(state.code)[0]
+    
+    console.log(fromCode(codeCell))
+})
+
+it('should disassemble nft', async () => {
+    let client = new TonClient({
+        endpoint: 'https://mainnet.tonhubapi.com/jsonRPC'
+    })
+    let address = Address.parseFriendly('EQBmG4YwsdGsUHG46rL-_GtGxsUrdmn-8Tau1DKkzQMNsGaW').address
     let state = await client.getContractState(address)
     if (!state.code) {
         console.error('code not found')
