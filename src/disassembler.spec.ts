@@ -1,23 +1,6 @@
 import { Address, Cell, TonClient } from 'ton'
 import { fromCode } from './disassembler'
-import { readFileSync, writeFileSync } from 'fs'
 import { compileFift, compileFunc } from 'ton-compiler'
-
-it('should disassemble giver', async () => {
-    let client = new TonClient({
-        endpoint: 'https://scalable-api.tonwhales.com/jsonRPC'
-    })
-    let address = Address.parseFriendly('Ef-kkdY_B7p-77TLn2hUhM6QidWrrsl8FYWCIvBMpZKprKDH').address
-    let state = await client.getContractState(address)
-    if (!state.code) {
-        console.error('code not found')
-        return
-    }
-
-    let codeCell = Cell.fromBoc(state.code)[0]
-    
-    // console.log(fromCode(codeCell))
-})
 
 
 it('should disassemble config', async () => {
@@ -33,23 +16,7 @@ it('should disassemble config', async () => {
 
     let codeCell = Cell.fromBoc(state.code)[0]
 
-    // console.log(fromCode(codeCell))
-})
-
-it('should disassemble mint', async () => {
-    let client = new TonClient({
-        endpoint: 'https://testnet.tonhubapi.com/jsonRPC'
-    })
-    let address = Address.parseFriendly('kQCz5AuHThREIDWANfcHpwbWc_g9rblW3qP__0_klue5v2Ay').address
-    let state = await client.getContractState(address)
-    if (!state.code) {
-        console.error('code not found')
-        return
-    }
-
-    let codeCell = Cell.fromBoc(state.code)[0]
-    
-    // console.log(fromCode(codeCell))
+    console.log(fromCode(codeCell))
 })
 
 it('should disassemble nft', async () => {
@@ -65,7 +32,7 @@ it('should disassemble nft', async () => {
 
     let codeCell = Cell.fromBoc(state.code)[0]
     
-    // console.log(fromCode(codeCell))
+    console.log(fromCode(codeCell))
 })
 
 it('should dump method', async () => {
@@ -81,5 +48,38 @@ it('should dump method', async () => {
     let code = await compileFift(fiftCode);
     let codeCell = Cell.fromBoc(code)[0]
 
+    console.log(fromCode(codeCell))
+})
+
+it('should disassemble elector', async () => {
+    let client = new TonClient({
+        endpoint: 'https://mainnet.tonhubapi.com/jsonRPC'
+    })
+    let address = Address.parseFriendly('Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF').address
+    let state = await client.getContractState(address)
+    if (!state.code) {
+        console.error('code not found')
+        return
+    }
+
+    let codeCell = Cell.fromBoc(state.code)[0]
+    
+    console.log(fromCode(codeCell))
+})
+
+
+it('should disassemble contract', async () => {
+    let client = new TonClient({
+        endpoint: 'https://mainnet.tonhubapi.com/jsonRPC'
+    })
+    let address = Address.parseFriendly('EQBRrTk63wHpvreMs7_cDKWh6zrYmQcSBOjKz1i6GcbRTLZX').address
+    let state = await client.getContractState(address)
+    if (!state.code) {
+        console.error('code not found')
+        return
+    }
+
+    let codeCell = Cell.fromBoc(state.code)[0]
+    
     console.log(fromCode(codeCell))
 })

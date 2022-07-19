@@ -1,0 +1,1 @@
+export const _isDebug = () => process.env.DEBUG && process.env.DEBUG.includes('tvm-disassembler');

@@ -1,6 +1,7 @@
 import { Cell, Slice } from 'ton';
 import { decompile, decompileMethodsMap } from '../disassembler';
 import { Codepage } from '../structs/codepage';
+import { _isDebug } from '../utils/isDebug';
 
 function fetchSubslice(slice: Slice, bits: number, refs?: number) {
     let subcell = new Cell();
@@ -25,6 +26,15 @@ CP0Auto.insertHex('0', 4, (slice) => {
 })
 CP0Auto.insertHex('1', 4, (slice) => {
     let n = slice.readUintNumber(4);
+    if (n === 0) {
+        let i = slice.readUintNumber(4);
+        let j = slice.readUintNumber(4);
+        return `s${i} s${j} XCHG`;
+    }
+    if (n === 1) {
+        let i = slice.readUintNumber(8);
+        return `s0 s${i} XCHG`;
+    }
     return `s1 s${n} XCHG`;
 })
 CP0Auto.insertHex('2', 4, (slice) => {
@@ -1221,10 +1231,10 @@ CP0Auto.insertHex('f4a0', 13, (slice, indent) => {
         let keyLen = slice.readUintNumber(10);
         let decompiled: string
         try {
-            decompiled = decompileMethodsMap(subslice.clone(), keyLen, indent)
+            decompiled = decompileMethodsMap(subslice.clone(), indent)
         } catch (e) {
-            console.error(e);
-            decompiled = subslice.toCell().bits.toFiftHex();
+            _isDebug() && console.error(e);
+            decompiled = subslice.toCell().toString(' '.repeat(indent));
         }
         return `${decompiled} ${keyLen} DICTPUSHCONST`;
     }
