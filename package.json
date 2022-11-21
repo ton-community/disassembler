@@ -7,7 +7,7 @@
   "author": "Dan Volkov <danila@whalescorp.com>",
   "scripts": {
     "build": "rm -rf dist/ && tsc",
-    "prepublish": "npm build"
+    "prepublish": "npm run build"
   },
   "files": [
     "dist"
