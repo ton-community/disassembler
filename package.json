@@ -1,20 +1,20 @@
 {
   "name": "tvm-disassembler",
   "description": "Provides Fift-like code from smart contract source",
-  "version": "1.2.1",
+  "version": "1.2.2",
   "main": "dist/index.js",
   "license": "MIT",
   "author": "Dan Volkov <danila@whalescorp.com>",
   "scripts": {
     "build": "rm -rf dist/ && tsc",
-    "prepublish": "npm build"
+    "prepublish": "npm run build"
   },
   "files": [
     "dist"
   ],
   "dependencies": {
     "bn.js": "^5.2.0",
-    "ton": "^9.3.1"
+    "ton": "^12.1.5"
   },
   "devDependencies": {
     "@types/bn.js": "^5.1.0",
