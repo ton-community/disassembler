@@ -986,14 +986,14 @@ CP0Auto.insertHex('f10', 10, (slice) => {
     let n = slice.loadUint(14);
     return `${n} CALL`;
 });
-// CP0Auto.insertHex('f14', 10, (slice) => {
-//     let args = slice.loadUint(14);
-//     return '(FIXED 1047)';
-// });
-// CP0Auto.insertHex('f18', 10, (slice) => {
-//     let args = slice.loadUint(14);
-//     return '(FIXED 1051)';
-// });
+CP0Auto.insertHex('f14', 10, (slice) => {
+    let args = slice.loadUint(14);
+    return `${args} JMP`;
+});
+CP0Auto.insertHex('f18', 10, (slice) => {
+    let args = slice.loadUint(14);
+    return `${args} PREPARE`;
+});
 // 15843328 (DUMMY)
 CP0Auto.insertHex('f20', 10, (slice) => {
     let nn = slice.loadUint(6);

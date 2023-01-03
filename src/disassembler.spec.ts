@@ -71,4 +71,10 @@ describe('disassembler', () => {
     
         expect(fromBoc(boc)).toMatchSnapshot();
     })
+
+    it('should disassemble #5', async () => {
+        let boc = await fetchCodeOrSnapshot('EQDSbgHX03B9_0cNBAMdlmhVbvhRNYhZNhTRH4wfNBmisKB5');
+
+        expect(fromBoc(boc)).toMatchSnapshot();
+    })
 })
