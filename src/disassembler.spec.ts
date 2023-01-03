@@ -1,85 +1,74 @@
-import { Address, Cell, TonClient } from 'ton'
-import { fromCode } from './disassembler'
+import { Address, Cell } from 'ton-core'
+import { fromBoc, fromCode } from './disassembler'
 import { compileFift, compileFunc } from 'ton-compiler'
+import { TonClient } from 'ton'
+import * as fs from 'fs';
 
+async function fetchCodeOrSnapshot(addr: string): Promise<Buffer> {
+    const snapshotPath = __dirname + '/__snapshots__/' + addr + '.boc';
+    if (fs.existsSync(snapshotPath)) {
+        return fs.readFileSync(snapshotPath);
+    }
 
-it('should disassemble config', async () => {
     let client = new TonClient({
         endpoint: 'https://scalable-api.tonwhales.com/jsonRPC'
     })
-    let address = Address.parseFriendly('Ef9VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVbxn').address
+
+    let address = Address.parseFriendly(addr).address
     let state = await client.getContractState(address)
     if (!state.code) {
-        console.error('code not found')
-        return
+        throw new Error('Code not found');
     }
+    fs.writeFileSync(snapshotPath, state.code);
 
-    let codeCell = Cell.fromBoc(state.code)[0]
+    return state.code;
+}
 
-    console.log(fromCode(codeCell))
-})
 
-it('should disassemble nft', async () => {
-    let client = new TonClient({
-        endpoint: 'https://mainnet.tonhubapi.com/jsonRPC'
-    })
-    let address = Address.parseFriendly('EQBmG4YwsdGsUHG46rL-_GtGxsUrdmn-8Tau1DKkzQMNsGaW').address
-    let state = await client.getContractState(address)
-    if (!state.code) {
-        console.error('code not found')
-        return
-    }
+describe('disassembler', () => {
+    beforeAll(() => {
+        process.env.DEBUG = process.env.DEBUG + ',tvm-disassembler'
+    });
 
-    let codeCell = Cell.fromBoc(state.code)[0]
+    it('should disassemble config', async () => {
+        let boc = await fetchCodeOrSnapshot('Ef9VVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVVbxn');
     
-    console.log(fromCode(codeCell))
-})
-
-it('should dump method', async () => {
-    let fiftCode = await compileFunc(`
-        () main() {
-
-        }
-
-        () owner() method_id {
-
-        }
-    `)
-    let code = await compileFift(fiftCode);
-    let codeCell = Cell.fromBoc(code)[0]
-
-    console.log(fromCode(codeCell))
-})
-
-it('should disassemble elector', async () => {
-    let client = new TonClient({
-        endpoint: 'https://mainnet.tonhubapi.com/jsonRPC'
+        expect(fromBoc(boc)).toMatchSnapshot();
     })
-    let address = Address.parseFriendly('Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF').address
-    let state = await client.getContractState(address)
-    if (!state.code) {
-        console.error('code not found')
-        return
-    }
-
-    let codeCell = Cell.fromBoc(state.code)[0]
     
-    console.log(fromCode(codeCell))
-})
-
-
-it('should disassemble contract', async () => {
-    let client = new TonClient({
-        endpoint: 'https://mainnet.tonhubapi.com/jsonRPC'
+    it('should disassemble nft', async () => {
+        let boc = await fetchCodeOrSnapshot('EQBmG4YwsdGsUHG46rL-_GtGxsUrdmn-8Tau1DKkzQMNsGaW');
+    
+        expect(fromBoc(boc)).toMatchSnapshot();
     })
-    let address = Address.parseFriendly('EQBRrTk63wHpvreMs7_cDKWh6zrYmQcSBOjKz1i6GcbRTLZX').address
-    let state = await client.getContractState(address)
-    if (!state.code) {
-        console.error('code not found')
-        return
-    }
-
-    let codeCell = Cell.fromBoc(state.code)[0]
     
-    console.log(fromCode(codeCell))
+    it('should dump method', async () => {
+        let fiftCode = await compileFunc(`
+            () main() {
+    
+            }
+    
+            () owner() method_id {
+    
+            }
+        `)
+        let code = await compileFift(fiftCode);
+        let codeCell = Cell.fromBoc(code)[0]
+    
+        expect(fromCode(codeCell)).toMatchSnapshot(); 
+    })
+    
+    it('should disassemble elector', async () => {
+        // Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF
+        let boc = await fetchCodeOrSnapshot('Ef8zMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzMzM0vF');
+    
+        expect(fromBoc(boc)).toMatchSnapshot();
+    })
+    
+    
+    it('should disassemble contract', async () => {
+        let boc = await fetchCodeOrSnapshot('EQBRrTk63wHpvreMs7_cDKWh6zrYmQcSBOjKz1i6GcbRTLZX');
+    
+        expect(fromBoc(boc)).toMatchSnapshot();
+    })
 })

@@ -1,5 +1,4 @@
-import { BN } from 'bn.js';
-import { Cell, Slice } from 'ton'
+import { beginCell, Cell, Dictionary, DictionaryValue, Slice } from 'ton-core';
 import { CP0Auto } from './codepages/cp0.generated';
 import { KnownMethods } from './consts/knownMethods';
 import { Codepage } from './structs/codepage';
@@ -24,8 +23,9 @@ export function decompile(slice: Slice, indent?: number) {
         result += txt + '\n'
     };
     let opCode = ''
-    while (((slice as any).bits as any).length > (slice as any).bits.currentOffset) {
-        let opCodePart = slice.readBit()
+
+    while (slice.remainingBits > 0) {
+        let opCodePart = slice.loadBit();
         opCode += opCodePart ? '1' : '0'
 
         let matches = codepage.find(opCode)
@@ -36,10 +36,12 @@ export function decompile(slice: Slice, indent?: number) {
             continue;
         }
         if (matches.length == 0) {
-            let fullCell = new Cell();
-            fullCell.bits.writeBitArray(Array.from(opCode).map(a => a == '0' ? false : true));
-            fullCell.writeCell(slice.toCell());
-            append(fullCell);
+            let fullCell = beginCell();
+            for (let bit of Array.from(opCode).map(a => a == '0' ? false : true)) {
+                fullCell.storeBit(bit);
+            }
+            fullCell.storeSlice(slice);
+            append(fullCell.asCell());
             continue;
         }
 
@@ -52,22 +54,35 @@ export function decompile(slice: Slice, indent?: number) {
             append(opTxt);
         }
 
-        if (((slice as any).bits as any).length == (slice as any).bits.currentOffset && (slice as any).refs.length > 0) {
-            slice = slice.readRef()
+        if (slice.remainingBits === 0 && slice.remainingRefs > 0) {
+            slice = slice.loadRef().beginParse()
         }
     }
     return result;
 }
 
-export function decompileMethodsMap(slice: Slice, indent?: number) {
-    let methodsMap = slice.readDict(19, (slice) => {
+function createSliceValue(): DictionaryValue<Slice> {
+    return {
+        serialize: (src, builder) => {
+            builder.storeSlice(src);
+        },
+        parse: (src) => {
+            return src;
+        }
+    };
+}
+
+export function decompileMethodsMap(slice: Slice, keyLen: number, indent?: number) {
+    let methodsMap = slice.loadDictDirect(Dictionary.Keys.Int(keyLen), createSliceValue());
+    let methodsMapDecompiled = new Map<number, string>();
+    for (let [key, cs] of methodsMap) {
         try {
-            return decompile(slice.clone(), (indent || 0) + 4);
+            methodsMapDecompiled.set(key, decompile(cs, (indent || 0) + 4));
         } catch (e) {
             _isDebug() && console.error(e);
-            return slice.toCell().toString(' '.repeat((indent || 0) + 4));
+            methodsMapDecompiled.set(key, cs.asCell().toString(' '.repeat((indent || 0) + 4)));
         }
-    });
+    }
     let result = '';
     const append = (txt: string) => {
         if (indent) {
@@ -76,11 +91,8 @@ export function decompileMethodsMap(slice: Slice, indent?: number) {
         result += txt + '\n';
     };
     append('(:methods');
-    indent = (indent || 0) + 2
-    for (let [key, code] of methodsMap) {
-        let cell = new Cell();
-        cell.bits.writeUint(new BN(key), 19);
-        let methodId = cell.beginParse().readIntNumber(19);
+    indent = (indent || 0) + 2;
+    for (let [methodId, code] of methodsMapDecompiled) {
         append(`${KnownMethods[methodId] ?? methodId}: \n${code}`);
     }
     result = result.slice(0, -1); // remove trailing newline
@@ -92,7 +104,7 @@ export function decompileMethodsMap(slice: Slice, indent?: number) {
 
 export function fromCode(cell: Cell) {
     let slice = cell.beginParse()
-    let header = slice.readUintNumber(16)
+    let header = slice.loadUint(16)
     if (header !== 0xff00) {
         throw new Error('unsupported codepage');
     }
@@ -100,4 +112,10 @@ export function fromCode(cell: Cell) {
     let result = 'SETCP0\n'
     result += decompile(slice);
     return result;
+}
+
+export function fromBoc(boc: Buffer) {
+    let cell = Cell.fromBoc(boc)[0];
+
+    return fromCode(cell);
 }

@@ -1445,20 +1445,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bn.js@npm:4.11.6":
-  version: 4.11.6
-  resolution: "bn.js@npm:4.11.6"
-  checksum: db23047bf06fdf9cf74401c8e76bca9f55313c81df382247d2c753868b368562e69171716b81b7038ada8860af18346fd4bcd1cf9d4963f923fe8e54e61cb58a
-  languageName: node
-  linkType: hard
-
-"bn.js@npm:5.2.0":
-  version: 5.2.0
-  resolution: "bn.js@npm:5.2.0"
-  checksum: 6117170393200f68b35a061ecbf55d01dd989302e7b3c798a3012354fa638d124f0b2f79e63f77be5556be80322a09c40339eda6413ba7468524c0b6d4b4cb7a
-  languageName: node
-  linkType: hard
-
 "boxen@npm:^7.0.0":
   version: 7.0.1
   resolution: "boxen@npm:7.0.1"
@@ -2404,16 +2390,6 @@ __metadata:
   version: 2.0.3
   resolution: "esutils@npm:2.0.3"
   checksum: 22b5b08f74737379a840b8ed2036a5fb35826c709ab000683b092d9054e5c2a82c27818f12604bfc2a9a76b90b6834ef081edbc1c7ae30d1627012e067c6ec87
-  languageName: node
-  linkType: hard
-
-"ethjs-unit@npm:0.1.6":
-  version: 0.1.6
-  resolution: "ethjs-unit@npm:0.1.6"
-  dependencies:
-    bn.js: 4.11.6
-    number-to-bn: 1.7.0
-  checksum: df6b4752ff7461a59a20219f4b1684c631ea601241c39660e3f6c6bd63c950189723841c22b3c6c0ebeb3c9fc99e0e803e3c613101206132603705fcbcf4def5
   languageName: node
   linkType: hard
 
@@ -3374,13 +3350,6 @@ __metadata:
   dependencies:
     is-extglob: ^2.1.1
   checksum: d381c1319fcb69d341cc6e6c7cd588e17cd94722d9a32dbd60660b993c4fb7d0f19438674e68dfec686d09b7c73139c9166b47597f846af387450224a8101ab4
-  languageName: node
-  linkType: hard
-
-"is-hex-prefixed@npm:1.0.0":
-  version: 1.0.0
-  resolution: "is-hex-prefixed@npm:1.0.0"
-  checksum: 5ac58e6e528fb029cc43140f6eeb380fad23d0041cc23154b87f7c9a1b728bcf05909974e47248fd0b7fcc11ba33cf7e58d64804883056fabd23e2b898be41de
   languageName: node
   linkType: hard
 
@@ -4802,16 +4771,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"number-to-bn@npm:1.7.0":
-  version: 1.7.0
-  resolution: "number-to-bn@npm:1.7.0"
-  dependencies:
-    bn.js: 4.11.6
-    strip-hex-prefix: 1.0.0
-  checksum: 5b8c9dbe7b49dc7a069e5f0ba4e197257c89db11463478cb002fee7a34dc8868636952bd9f6310e5fdf22b266e0e6dffb5f9537c741734718107e90ae59b3de4
-  languageName: node
-  linkType: hard
-
 "nwsapi@npm:^2.2.0":
   version: 2.2.2
   resolution: "nwsapi@npm:2.2.2"
@@ -5910,15 +5869,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"strip-hex-prefix@npm:1.0.0":
-  version: 1.0.0
-  resolution: "strip-hex-prefix@npm:1.0.0"
-  dependencies:
-    is-hex-prefixed: 1.0.0
-  checksum: 4cafe7caee1d281d3694d14920fd5d3c11adf09371cef7e2ccedd5b83efd9e9bd2219b5d6ce6e809df6e0f437dc9d30db1192116580875698aad164a6d6b285b
-  languageName: node
-  linkType: hard
-
 "strip-json-comments@npm:^3.1.1":
   version: 3.1.1
   resolution: "strip-json-comments@npm:3.1.1"
@@ -6109,6 +6059,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"ton-core@npm:^0.36.1":
+  version: 0.36.1
+  resolution: "ton-core@npm:0.36.1"
+  dependencies:
+    symbol.inspect: 1.0.1
+  peerDependencies:
+    ton-crypto: ">=3.2.0"
+  checksum: a46d2e6ccae2fb943025185c619164c4a3abf9fa0ceb70de6cb2c08fa37c28c2e3278b4a99c860c92f2b93f40108d3f5f4ea6faab2b9391a8c3188deb21f00be
+  languageName: node
+  linkType: hard
+
 "ton-crypto-primitives@npm:2.0.0":
   version: 2.0.0
   resolution: "ton-crypto-primitives@npm:2.0.0"
@@ -6118,33 +6079,32 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ton-crypto@npm:2.1.0":
-  version: 2.1.0
-  resolution: "ton-crypto@npm:2.1.0"
+"ton-crypto@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "ton-crypto@npm:3.2.0"
   dependencies:
     jssha: 3.2.0
     ton-crypto-primitives: 2.0.0
     tweetnacl: 1.0.3
-  checksum: 360c7dcd4692b802cc5a6a9bd1d7efde58f3f3adf0a3dbba3495f525998d2273efbedc28606ec7fbcbb0d16a73480541a4b810b461a228d0e72b3e4d0f406f1a
+  checksum: 5c4b077ce36f6d6583c6fee91be45ba88024cfb17927d2da8fce355f226dba559ba5dc91ee508b205c537d6dd6a34bfea17a26c2656ef80bd72f64d1a2604c45
   languageName: node
   linkType: hard
 
-"ton@npm:^12.3.3":
-  version: 12.3.3
-  resolution: "ton@npm:12.3.3"
+"ton@npm:^13.2.0":
+  version: 13.2.0
+  resolution: "ton@npm:13.2.0"
   dependencies:
     axios: ^0.25.0
-    bn.js: 5.2.0
     dataloader: ^2.0.0
-    ethjs-unit: 0.1.6
     fp-ts: ^2.11.1
     io-ts: ^2.2.16
     io-ts-reporters: ^2.0.0
     symbol.inspect: 1.0.1
     teslabot: ^1.3.0
-    ton-crypto: 2.1.0
-    tweetnacl: 1.0.3
-  checksum: 45794c58ecba70263ed5919c3828631d00263f537c922eefaa5707ddeef282f72f3bd134a8c4a7b30a8fa122445a91383572e2aa8a15cbb0bf1c83da67a90d76
+  peerDependencies:
+    ton-core: ">=0.32.0"
+    ton-crypto: ">=3.2.0"
+  checksum: 70f3c39091c69a86ae4cf1123e3bb6eb91bb9436b07dfea9d7c7cf6ec2c7207217e37885975b396e8a64c12482d71092da6b1aae847b9cddadb485dd9d6d043a
   languageName: node
   linkType: hard
 
@@ -6234,13 +6194,15 @@ __metadata:
     "@types/jest": ^27.4.0
     jest: ^27.4.7
     release-it: ^15.5.1
-    ton: ^12.3.3
+    ton: ^13.2.0
     ton-compiler: ^1.0.0
+    ton-core: ^0.36.1
+    ton-crypto: ^3.2.0
     ts-jest: ^27.1.3
     tsc: ^2.0.3
     typescript: ^4.5.5
   peerDependencies:
-    ton: "*"
+    ton-core: ">=0.27.0"
   languageName: unknown
   linkType: soft
 
