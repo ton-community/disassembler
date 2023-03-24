@@ -22,7 +22,7 @@ export class Codepage {
         return this._trie.getValue(bitPrefix)
     }
 
-    find(prefix: string) {
-        return this._trie.find(prefix);
+    find(prefix: string, maxOccurencies: number = -1) {
+        return this._trie.find(prefix, maxOccurencies);
     }
 }

@@ -18,15 +18,19 @@ class TrieNode<T> {
     };
 }
 
-function findAllWords(node: TrieNode<any>, arr: string[]) {
+function findAllWords(node: TrieNode<any>, arr: string[], maxOccurencies: number = -1) {
     // base case, if node is at a word, push to output
     if (node.end) {
         arr.unshift(node.getWord());
     }
 
+    if (maxOccurencies !== -1 && arr.length >= maxOccurencies) {
+        return;
+    }
+
     // iterate through each children, call recursive findAllWords
     for (var child in node.children) {
-        findAllWords(node.children[child], arr);
+        findAllWords(node.children[child], arr, maxOccurencies);
     }
 }
 export class Trie<T> {
@@ -75,7 +79,7 @@ export class Trie<T> {
         return node.end;
     }
 
-    find(prefix: string) {
+    find(prefix: string, maxOccurencies: number = -1) {
         var node = this.root;
         var output: string[] = [];
 
@@ -87,7 +91,7 @@ export class Trie<T> {
             }
         }
 
-        findAllWords(node, output);
+        findAllWords(node, output, maxOccurencies);
 
         return output;
     }

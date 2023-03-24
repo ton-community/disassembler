@@ -28,7 +28,8 @@ export function decompile(slice: Slice, indent?: number) {
         let opCodePart = slice.loadBit();
         opCode += opCodePart ? '1' : '0'
 
-        let matches = codepage.find(opCode)
+        // edit maxOccurencies only for debugging purposes
+        let matches = codepage.find(opCode, 2);
         if (matches.length > 1) {
             continue;
         }
