@@ -8,8 +8,7 @@
   "repository": "https://github.com/ton-foundation/disassembler.git",
   "scripts": {
     "build": "rm -rf dist/ && tsc",
-    "prepublish": "yarn build",
-    "release": "release-it"
+    "release": "yarn build && release-it"
   },
   "files": [
     "dist"
