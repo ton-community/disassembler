@@ -4,6 +4,7 @@
 
 [![Published on npm](https://img.shields.io/npm/v/tvm-disassembler.svg?logo=npm)](https://www.npmjs.com/package/tvm-disassembler)  
 ## Usage
+
 ```typescript
 let client = new TonClient({
     endpoint: 'https://scalable-api.tonwhales.com/jsonRPC'
@@ -14,4 +15,14 @@ let state = await client.getContractState(address);
 let codeCell = Cell.fromBoc(state.code)[0];
     
 let source = await fromCode(codeCell);
+```
+
+or
+
+```typescript
+import { fromBoc } from 'tvm-disassembler'
+import * as fs from 'fs'
+const boc = fs.readFileSync('path.boc')
+const code = fromBoc(boc)
+console.log(code)
 ```
