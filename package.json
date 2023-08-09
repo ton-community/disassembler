@@ -17,7 +17,7 @@
     "@release-it/keep-a-changelog": "^3.1.0",
     "@ton/core": "^0.49.2",
     "@ton/crypto": "^3.2.0",
-    "@ton/ton": "^13.2.0",
+    "@ton/ton": "^13.5.1",
     "@types/bn.js": "^5.1.0",
     "@types/jest": "^27.4.0",
     "jest": "^27.4.7",
