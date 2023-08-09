@@ -1,4 +1,4 @@
-// import { Slice } from 'ton';
+// import { Slice } from '@ton/ton';
 // import { decompile } from '../decompiler';
 // import { Codepage } from '../structs/codepage';
 

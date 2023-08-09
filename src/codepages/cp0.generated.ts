@@ -1,4 +1,4 @@
-import { beginCell, Cell, Slice } from 'ton-core';
+import { beginCell, Cell, Slice } from '@ton/core';
 import { decompile, decompileMethodsMap } from '../disassembler';
 import { Codepage } from '../structs/codepage';
 import { _isDebug } from '../utils/isDebug';
