@@ -1,4 +1,4 @@
-import { Slice } from 'ton';
+import { Slice } from '@ton/ton';
 import { Trie } from './trie';
 
 type Op = ((slice: Slice, ident: number) => string) | string

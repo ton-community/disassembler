@@ -1,4 +1,4 @@
-import { beginCell, Cell, Dictionary, DictionaryValue, Slice } from 'ton-core';
+import { beginCell, Cell, Dictionary, DictionaryValue, Slice } from '@ton/core';
 import { CP0Auto } from './codepages/cp0.generated';
 import { KnownMethods } from './consts/knownMethods';
 import { Codepage } from './structs/codepage';

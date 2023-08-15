@@ -894,13 +894,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@scarf/scarf@npm:^1.1.1":
-  version: 1.1.1
-  resolution: "@scarf/scarf@npm:1.1.1"
-  checksum: f3205e7a76fed1ec3328643a5f276f4aab5c67d0e17ca0a414755aacae529f4a3492b44607f9ad066470ecb3ee003e72b3d9581f58dc6c507c18180611ff113e
-  languageName: node
-  linkType: hard
-
 "@sindresorhus/is@npm:^5.2.0":
   version: 5.3.0
   resolution: "@sindresorhus/is@npm:5.3.0"
@@ -932,6 +925,53 @@ __metadata:
   dependencies:
     defer-to-connect: ^2.0.1
   checksum: fc9cb993e808806692e4a3337c90ece0ec00c89f4b67e3652a356b89730da98bc824273a6d67ca84d5f33cd85f317dcd5ce39d8cc0a2f060145a608a7cb8ce92
+  languageName: node
+  linkType: hard
+
+"@ton/core@npm:^0.49.2":
+  version: 0.49.2
+  resolution: "@ton/core@npm:0.49.2"
+  dependencies:
+    symbol.inspect: 1.0.1
+  peerDependencies:
+    "@ton/crypto": ">=3.2.0"
+  checksum: c0bbad44f89664852d2289e073fa5666d38b4738f13cb951b973bd56b635df6d45ee26c6d1d6348c8736172fd84aaa8f5ef3296f45cca2b346c715a92a0cf774
+  languageName: node
+  linkType: hard
+
+"@ton/crypto-primitives@npm:2.0.0":
+  version: 2.0.0
+  resolution: "@ton/crypto-primitives@npm:2.0.0"
+  dependencies:
+    jssha: 3.2.0
+  checksum: 1a686b04dc1430792341339f0ddc1e2f5effd94d31ae118baf2c510e074201495801787b2ca881a6ceb587f89212eb081ec9e3979d374d9c9004c6c4b61fc591
+  languageName: node
+  linkType: hard
+
+"@ton/crypto@npm:^3.2.0":
+  version: 3.2.0
+  resolution: "@ton/crypto@npm:3.2.0"
+  dependencies:
+    "@ton/crypto-primitives": 2.0.0
+    jssha: 3.2.0
+    tweetnacl: 1.0.3
+  checksum: 0851fad506796573ec6079c1f36d3d07f4070abb90a4a2f3e621f6b2b2c6725c13096a5afdabb24611aa2a063ba335dcbc742e98a3c1cd0bbf3645ae55c1a8c6
+  languageName: node
+  linkType: hard
+
+"@ton/ton@npm:^13.5.1":
+  version: 13.5.1
+  resolution: "@ton/ton@npm:13.5.1"
+  dependencies:
+    axios: ^0.25.0
+    dataloader: ^2.0.0
+    symbol.inspect: 1.0.1
+    teslabot: ^1.3.0
+    zod: ^3.21.4
+  peerDependencies:
+    "@ton/core": ">=0.49.2"
+    "@ton/crypto": ">=3.2.0"
+  checksum: a9ce1ddcd513a77b8d610700d758c485bd970d40c8a34bc341c7b518714e1789e04aa9e41078cae4a6082a0b69baccae4a4d7d9b0d35312c2a4c262be48a409a
   languageName: node
   linkType: hard
 
@@ -2596,13 +2636,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"fp-ts@npm:^2.11.1":
-  version: 2.13.1
-  resolution: "fp-ts@npm:2.13.1"
-  checksum: 618e0028aca9ff1d52b86f438499ccab149825bdab14c678d22c3e2ccbf9d36fd1f26d463bf0ae1e63f5cd79dd54c8218af2cca0daeea68b039307b751ae9563
-  languageName: node
-  linkType: hard
-
 "fs-extra@npm:^8.1.0":
   version: 8.1.0
   resolution: "fs-extra@npm:8.1.0"
@@ -3204,27 +3237,6 @@ __metadata:
   version: 1.4.0
   resolution: "interpret@npm:1.4.0"
   checksum: 2e5f51268b5941e4a17e4ef0575bc91ed0ab5f8515e3cf77486f7c14d13f3010df9c0959f37063dcc96e78d12dc6b0bb1b9e111cdfe69771f4656d2993d36155
-  languageName: node
-  linkType: hard
-
-"io-ts-reporters@npm:^2.0.0":
-  version: 2.0.1
-  resolution: "io-ts-reporters@npm:2.0.1"
-  dependencies:
-    "@scarf/scarf": ^1.1.1
-  peerDependencies:
-    fp-ts: ^2.10.5
-    io-ts: ^2.2.16
-  checksum: d3ffd603249417475771c3c29be8b3455d82010bf2f53b7e0fc8974c4864d0ff5366bcc58a0e0e6a3016f0ffa98c1acc8f42ef19d25d3ca89652574200d57193
-  languageName: node
-  linkType: hard
-
-"io-ts@npm:^2.2.16":
-  version: 2.2.20
-  resolution: "io-ts@npm:2.2.20"
-  peerDependencies:
-    fp-ts: ^2.5.0
-  checksum: 72517bf72ab1ad61b81960cb37f46e7a9f6dc84235b7d9b62f346ca84120dd89134b652fc3a0b9751129331084fd3e059349561bb96587d91ba7b40985fe7aac
   languageName: node
   linkType: hard
 
@@ -6059,55 +6071,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ton-core@npm:^0.36.1":
-  version: 0.36.1
-  resolution: "ton-core@npm:0.36.1"
-  dependencies:
-    symbol.inspect: 1.0.1
-  peerDependencies:
-    ton-crypto: ">=3.2.0"
-  checksum: a46d2e6ccae2fb943025185c619164c4a3abf9fa0ceb70de6cb2c08fa37c28c2e3278b4a99c860c92f2b93f40108d3f5f4ea6faab2b9391a8c3188deb21f00be
-  languageName: node
-  linkType: hard
-
-"ton-crypto-primitives@npm:2.0.0":
-  version: 2.0.0
-  resolution: "ton-crypto-primitives@npm:2.0.0"
-  dependencies:
-    jssha: 3.2.0
-  checksum: a81e5e7f1e44a2f32c519d6a9c3512c047b837be2f90a4e5aa226378b330ec6f9d36c1937a21b947eb792ae819c6906cfbd5b5eeab891f9df486d570141fc749
-  languageName: node
-  linkType: hard
-
-"ton-crypto@npm:^3.2.0":
-  version: 3.2.0
-  resolution: "ton-crypto@npm:3.2.0"
-  dependencies:
-    jssha: 3.2.0
-    ton-crypto-primitives: 2.0.0
-    tweetnacl: 1.0.3
-  checksum: 5c4b077ce36f6d6583c6fee91be45ba88024cfb17927d2da8fce355f226dba559ba5dc91ee508b205c537d6dd6a34bfea17a26c2656ef80bd72f64d1a2604c45
-  languageName: node
-  linkType: hard
-
-"ton@npm:^13.2.0":
-  version: 13.2.0
-  resolution: "ton@npm:13.2.0"
-  dependencies:
-    axios: ^0.25.0
-    dataloader: ^2.0.0
-    fp-ts: ^2.11.1
-    io-ts: ^2.2.16
-    io-ts-reporters: ^2.0.0
-    symbol.inspect: 1.0.1
-    teslabot: ^1.3.0
-  peerDependencies:
-    ton-core: ">=0.32.0"
-    ton-crypto: ">=3.2.0"
-  checksum: 70f3c39091c69a86ae4cf1123e3bb6eb91bb9436b07dfea9d7c7cf6ec2c7207217e37885975b396e8a64c12482d71092da6b1aae847b9cddadb485dd9d6d043a
-  languageName: node
-  linkType: hard
-
 "tough-cookie@npm:^4.0.0":
   version: 4.1.2
   resolution: "tough-cookie@npm:4.1.2"
@@ -6190,19 +6153,19 @@ __metadata:
   resolution: "tvm-disassembler@workspace:."
   dependencies:
     "@release-it/keep-a-changelog": ^3.1.0
+    "@ton/core": ^0.49.2
+    "@ton/crypto": ^3.2.0
+    "@ton/ton": ^13.5.1
     "@types/bn.js": ^5.1.0
     "@types/jest": ^27.4.0
     jest: ^27.4.7
     release-it: ^15.5.1
-    ton: ^13.2.0
     ton-compiler: ^1.0.0
-    ton-core: ^0.36.1
-    ton-crypto: ^3.2.0
     ts-jest: ^27.1.3
     tsc: ^2.0.3
     typescript: ^4.5.5
   peerDependencies:
-    ton-core: ">=0.27.0"
+    "@ton/core": ">=0.49.2"
   languageName: unknown
   linkType: soft
 
@@ -6733,5 +6696,12 @@ __metadata:
     y18n: ^5.0.5
     yargs-parser: ^20.2.2
   checksum: b14afbb51e3251a204d81937c86a7e9d4bdbf9a2bcee38226c900d00f522969ab675703bee2a6f99f8e20103f608382936034e64d921b74df82b63c07c5e8f59
+  languageName: node
+  linkType: hard
+
+"zod@npm:^3.21.4":
+  version: 3.21.4
+  resolution: "zod@npm:3.21.4"
+  checksum: f185ba87342ff16f7a06686767c2b2a7af41110c7edf7c1974095d8db7a73792696bcb4a00853de0d2edeb34a5b2ea6a55871bc864227dace682a0a28de33e1f
   languageName: node
   linkType: hard

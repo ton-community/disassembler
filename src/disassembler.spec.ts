@@ -1,7 +1,7 @@
-import { Address, Cell } from 'ton-core'
+import { Address, Cell } from '@ton/core'
 import { fromBoc, fromCode } from './disassembler'
 import { compileFift, compileFunc } from 'ton-compiler'
-import { TonClient } from 'ton'
+import { TonClient } from '@ton/ton'
 import * as fs from 'fs';
 
 async function fetchCodeOrSnapshot(addr: string): Promise<Buffer> {
